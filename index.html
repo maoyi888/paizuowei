@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- 在head标签内添加html2canvas库引用 -->
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <title>智能座位编排系统</title>
+    <style>
+        body { 
+            padding: 20px; 
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .seat-grid { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 15px; 
+            margin: 20px 0; 
+            max-width: 90%;
+            overflow-x: auto;
+        }
+        /* 新增居中容器样式 */
+        .main-container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .platform { background: #f0f0f0; padding: 15px; text-align: center; font-weight: bold; }
+/* 调整座位行布局 */
+.seat-row {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    justify-content: flex-start; /* 修改为左对齐 */
+    flex-wrap: nowrap;
+    padding-left: 10px;
+}
+        /* 新增过道按钮样式 */
+        .aisle-button {
+            margin: 10px 0;
+            white-space: nowrap;
+        }
+        .group-container { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .group-col { display: flex; flex-direction: column; gap: 10px; }
+        .seat { 
+            width: 80px; height: 40px; border: 1px solid #ccc; 
+            display: flex; align-items: center; justify-content: center;
+            cursor: move; background: white; transition: all 0.2s;
+        }
+        .occupied { background: #e3f2fd; }
+        /* 修改控件容器样式 */
+        .controls { 
+            display: flex; 
+            gap: 10px; 
+            margin-bottom: 20px; 
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        /* 新增列头居中样式 */
+        .group-header {
+            text-align: center;
+            width: 100%;
+        }
+        textarea { width: 300px; height: 100px; }
+       // #unassignedStudents { margin-top: 20px; border-top: 2px solid #ccc; padding: 15px; }
+        /* 优化未分配区域居中 */
+        #unassignedStudents {
+            width: 100%;
+            max-width: 1200px;
+        }
+        #unassignedList { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 5px; }
+        #unassignedList li { padding: 5px 10px; background: #fff; border: 1px solid #ccc; border-radius: 3px; cursor: move; }
+        .group-header { font-weight: bold; padding: 5px; border: 1px dashed #999; cursor: move; background: #f8f9fa; }
+        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+                background: white; padding: 20px; border: 1px solid #ccc; box-shadow: 0 0 10px rgba(0,0,0,0.1); 
+                z-index: 1000; }
+        .danger-button { background: #ff4444; color: white; border: none; padding: 8px 12px; border-radius: 4px; }
+        /* 添加标题样式 */
+        h1.title {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        /* 添加删除区域样式 */
+        .delete-dropzone {
+            width: 120px; 
+            height: 40px;
+            border: 2px dashed #ff4444;
+            background: #ffeaea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 20px;
+            color: #ff4444;
+            font-size: 14px;
+        }
+        .delete-dropzone.dragover {
+            background: #ffcccc;
+        }
+        /* 新增删除区域布局样式 */
+        #unassignedStudents h3 {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .delete-dropzone {
+            margin-left: 0;
+            flex-shrink: 0;
+        }
+   /* 新增讲台样式 */
+    .platform { 
+        background: #808080 !important; 
+        width: 160px;
+        font-size: 20px !important;
+        font-weight: bold !important;
+        margin: 0 auto;
+        padding: 15px;
+        text-align: center;
+    }
+/* 修改行号列样式 */
+.row-numbers {
+    display: flex;
+    flex-direction: column;
+    margin-right: 25px;
+    position: sticky;
+    left: 0;
+    background: white;
+    z-index: 1;
+    flex-shrink: 0;
+    min-width: 100px;
+    /* 新增精确间距调整 */
+    gap: 10px; /* 原为10px，增大间距 */
+    padding: 1px 0; /* 增加上下内边距 */
+}
+
+/* 调整行号项高度和间距 */
+.row-number {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    background: #f8f9fa;
+    border: 1px dashed #ccc;
+    cursor: move;
+    font-weight: bold;
+    /* 新增对齐修正 */
+    margin: 1px 0; /* 增加垂直外边距 */
+    transform: translateY(0px); /* 微调垂直位置 */
+}
+/* 新增控制条样式 */
+//.control-bars {
+    //gap: 30px;
+//}
+//.control-bar {
+    //display: flex;
+   // gap: 2px;
+//}
+/* 修改垂直方向控制条间距 */
+.control-bar.vertical {
+    flex-direction: column;
+    gap: 10px !important; /* 从2px改为10px */
+}
+/* 调整行号列容器定位 */
+.row-numbers {
+    position: relative;
+    margin: 0 40px; /* 为控制条留出空间 */
+}
+/* 修改控制条定位样式 */
+.teacher-controls {
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+}
+
+.student-controls {
+    position: absolute;
+    top: -110px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+}
+/* 修改控制条按钮尺寸 */
+.control-bar button {
+    height: 25px !important;  /* 统一高度 */
+    width: 60px !important;  /* 统一宽度 */
+    margin: 2px !important;
+}
+/* 学生视角下移补偿调整 */
+.row-numbers.student-view-row-numbers {
+    transform: translateY(56px); /* 原为58px，减少2px补偿 */
+    margin-top: 18px;  /* 原为20px，减少2px */
+}
+/* 新增按钮布局样式 */
+.control-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.control-bar {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* 新增美化样式 */
+body {
+    background: #f5f7fa;
+}
+
+.controls {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+button {
+    background: #4a9ff5;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+button:hover {
+    background: #357abd;
+    transform: translateY(-1px);
+}
+
+.seat {
+    background: #ffffff;
+    border: 2px solid #4a9ff5;
+   // border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(74, 159, 245, 0.2);
+    font-weight: 500;
+    color: #2c3e50;
+    transition: all 0.2s;
+}
+
+.seat.occupied {
+    background: #e8f3ff;
+    border-color: #8bc3ff;
+}
+
+.platform {
+    background: linear-gradient(145deg, #6c757d, #5a6268) !important;
+   // color: white !important;
+   // border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.delete-dropzone {
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.modal {
+    border-radius: 10px;
+    background: #f8f9fa;
+}
+
+/* 过道按钮样式 */
+.aisle-button {
+    background: #f0f0f0;
+    color: #666;
+}
+
+/* 移动按钮颜色 */
+.control-bar button {
+    background: #4CAF50; /* 绿色 */
+}
+
+/* 危险按钮保持红色 */
+.danger-button {
+    background: #ff4444;
+}
+
+/* 新增图标按钮样式 */
+button i {
+    margin-right: 5px;
+}
+
+/* 增强视觉效果 */
+.seat {
+    //border-radius: 8px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+.seat:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+}
+
+.controls button {
+    padding: 10px 20px;
+    border-radius: 25px;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* 新增颜色区分 */
+.control-bar button {
+    background: #4CAF50; /* 绿色移动按钮 */
+}
+
+.aisle-button {
+    background: #f5f5f5;
+    color: #666;
+    border: 1px solid #ddd;
+}
+    </style>
+</head>
+<body>
+ <!-- 添加标题 -->
+    <h1 class="title">智能座位编排系统</h1>
+
+ <div class="controls">
+    <div>
+        <button onclick="document.getElementById('fileInput').click()">
+            <i class="fas fa-file-import"></i> 导入历史数据
+        </button>
+        <input type="file" id="fileInput" hidden onchange="importData(event)">
+        行数：<input type="number" id="rows" min="1" value="7" style="width: 60px;">
+        列数：<input type="number" id="cols" min="1" value="8" style="width: 60px;">
+        <button onclick="generateSeats()">
+            <i class="fas fa-sync-alt"></i> 生成座位布局
+        </button>
+    </div>
+    <div>
+        <button onclick="toggleView()" id="viewToggle">
+            <i class="fas fa-chalkboard-teacher"></i> 教师视角
+        </button>
+        <button onclick="showStudentModal()">
+            <i class="fas fa-users"></i> 添加学生
+        </button>
+        <button class="danger-button" onclick="clearSeatStudents()">
+            <i class="fas fa-trash-alt"></i> 清空座位
+        </button>
+        <button class="danger-button" onclick="clearAllData()">
+            <i class="fas fa-broom"></i> 全部清空
+        </button>
+        <button onclick="exportSystemData()">
+            <i class="fas fa-save"></i> 保存数据
+        </button>
+        <button onclick="exportExcel()">
+            <i class="fas fa-file-excel"></i> 导出Excel
+        </button>
+        <button onclick="exportPDF()">
+            <i class="fas fa-file-pdf"></i> 导出PDF
+        </button>
+    </div>
+</div>
+
+<div class="seat-grid" id="seatGrid"></div>
+
+    <!-- 修改未分配学生标签 -->
+    <div id="unassignedStudents">
+        <h3>未分配学生（<span id="unassignedCount">0</span>人）
+            <button class="danger-button" onclick="clearUnassignedStudents()" style="margin-left: 15px;">一键清空未分配</button>
+           <button onclick="randomToEmptySeats()">随机到空座位</button>
+            <!-- 新增删除区域 -->
+            <div class="delete-dropzone" 
+                 ondragover="handleDeleteDragOver(event)"
+                 ondragleave="handleDeleteDragLeave(event)"
+                 ondrop="handleDeleteDrop(event)">
+                拖曳到此处删除
+            </div>
+        </h3>
+        <ul id="unassignedList"></ul>
+    </div>
+
+
+    <div id="studentModal" class="modal">
+        <h3>批量添加学生（每行一个姓名）</h3>
+        <textarea id="studentList"></textarea><br>
+        <button onclick="addStudents()">添加学生</button>
+        <button onclick="hideStudentModal()">取消</button>
+    </div>
+
+
+    <script>
+
+        let students = [];
+        let currentAisles = [];
+        let currentView = 'teacher';
+
+        function initialize() {
+     loadData();
+    generateSeats(); // 确保首次加载时生成座位
+    updateUnassignedList();
+        }
+
+        function showStudentModal() {
+            document.getElementById('studentModal').style.display = 'block';
+        }
+
+        function hideStudentModal() {
+            document.getElementById('studentModal').style.display = 'none';
+            document.getElementById('studentList').value = '';
+        }
+
+        function getRows() {
+            return parseInt(document.getElementById('rows').value) || 7;
+        }
+
+        function getCols() {
+            return parseInt(document.getElementById('cols').value) || 8;
+        }
+
+        function generateSeats() {
+            const seatGrid = document.getElementById('seatGrid');
+            seatGrid.innerHTML = '';
+            
+    const newRows = getRows();
+    const newCols = getCols();
+    const oldRows = students.reduce((max, s) => Math.max(max, (s.seat?.row ?? -1) + 1), 0);
+    // 修改后的行数变化处理逻辑
+    if (newRows !== oldRows) {
+        if (currentView === 'teacher') {
+            if (newRows < oldRows) {
+                // 教师视角删除顶部行（逻辑行号大的行）
+                students.forEach(s => {
+                    if (s.seat && s.seat.row >= newRows) s.seat = null;
+                });
+            }
+        } else {
+            if (newRows < oldRows) {
+                // 学生视角删除底部行（逻辑行号大的行）
+                students.forEach(s => {
+                    if (s.seat && s.seat.row >= newRows) s.seat = null;
+                });
+            }
+        }
+    }
+
+
+
+
+    // 新增列数变化处理（关键修改部分）
+    const oldCols = students.reduce((max, s) => Math.max(max, (s.seat?.col ?? -1) + 1), 0);
+    if (newCols < oldCols) {
+        students.forEach(s => {
+            if (s.seat && s.seat.col >= newCols) s.seat = null;
+        });
+    }
+
+            const rows = getRows();
+            const cols = getCols();
+
+            const platformRow = document.createElement('div');
+            platformRow.className = 'platform';
+            platformRow.textContent = '讲台';
+
+            const seatRow = document.createElement('div');
+            seatRow.className = 'seat-row';
+
+
+
+
+
+    // 修改后的行列顺序定义
+    const rowsOrder = currentView === 'teacher' 
+        ? Array.from({length: newRows}, (_, i) => newRows - 1 - i)
+        : Array.from({length: newRows}, (_, i) => i);
+
+    const colsOrder = currentView === 'teacher' 
+        ? Array.from({length: newCols}, (_, i) => i)
+        : Array.from({length: newCols}, (_, i) => newCols - 1 - i);
+
+            colsOrder.forEach(logicalCol => {
+                const groupContainer = document.createElement('div');
+                groupContainer.className = 'group-container';
+                groupContainer.dataset.col = logicalCol;
+
+                const groupHeader = document.createElement('div');
+                groupHeader.className = 'group-header';
+               // groupHeader.textContent = `第${String.fromCharCode(65 + logicalCol)}组`;
+                groupHeader.textContent = `第${logicalCol+1}列`;
+                groupHeader.draggable = true;
+                groupHeader.dataset.col = logicalCol;
+                groupHeader.addEventListener('dragstart', handleGroupDragStart);
+                groupHeader.addEventListener('dragover', handleDragOver);
+                groupHeader.addEventListener('drop', handleGroupDrop);
+
+                const aisleBtn = document.createElement('button');
+
+            if (currentView === 'teacher') {
+                aisleBtn.textContent = currentAisles.includes(logicalCol) 
+                    ? '←移除过道' 
+                    : '←添加过道';
+              aisleBtn.className = 'aisle-button';
+            } else {
+                aisleBtn.textContent = currentAisles.includes(logicalCol) 
+                    ? '移除过道→' 
+                    : '添加过道→';
+            aisleBtn.className = 'aisle-button';
+            }
+                aisleBtn.onclick = () => toggleAisle(logicalCol);
+
+                const groupCol = document.createElement('div');
+                groupCol.className = 'group-col';
+              //  if (currentAisles.includes(logicalCol)) {
+                   // groupCol.style.marginLeft = '40px';
+               // }
+
+            // 修改过道边距方向以适应视角
+            if (currentAisles.includes(logicalCol)) {
+                if (currentView === 'teacher') {
+                    groupCol.style.marginLeft = '40px'; // 教师视角左侧边距
+                } else {
+                    groupCol.style.marginRight = '40px'; // 学生视角右侧边距
+                }
+            }
+
+                // 按行顺序生成座位
+                rowsOrder.forEach(logicalRow => {
+                    const seat = document.createElement('div');
+                    seat.className = 'seat';
+                    seat.draggable = true;
+                    seat.dataset.row = logicalRow; // 存储逻辑行号
+                    seat.dataset.col = logicalCol;
+
+                    // 查找学生时始终使用逻辑坐标
+                    const student = students.find(s => 
+                        s.seat?.row === logicalRow && 
+                        s.seat?.col === logicalCol
+                    );
+                    
+                    if (student) {
+                        seat.textContent = student.name;
+                        seat.dataset.studentId = student.id;
+                        seat.classList.add('occupied');
+                    }
+
+                    seat.addEventListener('dragstart', handleDragStart);
+                    seat.addEventListener('dragover', handleDragOver);
+                    seat.addEventListener('drop', handleDrop);
+                    seat.addEventListener('contextmenu', handleRightClick);
+
+                    groupCol.appendChild(seat);
+                });
+
+
+
+// 组合元素时不再包含行号列
+if (currentView === 'teacher') {
+    groupContainer.appendChild(groupCol);
+    groupContainer.appendChild(aisleBtn);
+    groupContainer.appendChild(groupHeader);
+} else {
+    groupContainer.appendChild(groupHeader);
+    groupContainer.appendChild(aisleBtn);
+    groupContainer.appendChild(groupCol);
+}
+
+
+                seatRow.appendChild(groupContainer);
+            });
+
+            // 讲台位置处理
+            if (currentView === 'teacher') {
+                seatGrid.appendChild(seatRow);
+                seatGrid.appendChild(platformRow); // 讲台在下
+            } else {
+                seatGrid.appendChild(platformRow); // 讲台在上
+                seatGrid.appendChild(seatRow);
+            }
+
+    // 创建行号列（移动到循环外）
+    const rowNumbersCol = document.createElement('div');
+    rowNumbersCol.className = 'row-numbers';
+
+
+
+    rowsOrder.forEach(logicalRow => {
+        const rowNumber = document.createElement('div');
+        rowNumber.className = 'row-number';
+        rowNumber.textContent = `第${logicalRow + 1}行`;
+        rowNumber.dataset.row = logicalRow;
+        rowNumber.draggable = true;
+        rowNumber.addEventListener('dragstart', handleRowDragStart);
+        rowNumber.addEventListener('dragover', handleDragOver);
+        rowNumber.addEventListener('drop', handleRowDrop);
+        rowNumbersCol.appendChild(rowNumber);
+    });
+
+    // 在教师视角下将行号列添加到最左侧
+    seatRow.appendChild(rowNumbersCol);
+
+// 添加控制条容器
+const controlBars = document.createElement('div');
+//controlBars.className = 'control-bars';
+    // 调整控制条类名应用
+    controlBars.className = `control-bars ${currentView}-controls`;
+
+// 上移行按钮
+const upControl = document.createElement('div');
+upControl.className = 'control-bar';
+upControl.innerHTML = currentView === 'teacher' 
+    ? `<button onclick="moveRow(1)">↑上移</button>`
+    : `<button onclick="moveRow(-1)">↑上移</button>`;
+
+// 左右移动列按钮
+const colControl = document.createElement('div');
+colControl.className = 'control-bar';
+colControl.innerHTML = currentView === 'teacher'
+    ? `<button onclick="moveColumn(-1)">←左移</button>
+       <button onclick="moveColumn(1)">右移→</button>`
+    : `<button onclick="moveColumn(1)">←左移</button>
+       <button onclick="moveColumn(-1)">右移→</button>`;
+
+// 下移行按钮
+const downControl = document.createElement('div');
+downControl.className = 'control-bar';
+downControl.innerHTML = currentView === 'teacher'
+    ? `<button onclick="moveRow(-1)">下移↓</button>`
+    : `<button onclick="moveRow(1)">下移↓</button>`;
+
+controlBars.appendChild(upControl);
+controlBars.appendChild(colControl);
+controlBars.appendChild(downControl);
+
+    // 根据视角设置定位类
+    if (currentView === 'teacher') {
+        controlBars.classList.add('teacher-controls');
+    } else {
+        controlBars.classList.add('student-controls');
+    }
+
+    // 插入到行号列中
+    //rowNumbersCol.insertBefore(controlBars, rowNumbersCol.firstChild);
+
+    // 修改控制条插入逻辑
+    if (currentView === 'teacher') {
+        rowNumbersCol.appendChild(controlBars);
+    } else {
+        rowNumbersCol.insertBefore(controlBars, rowNumbersCol.firstChild);
+    }
+
+ // 新增学生视角样式
+if (currentView === 'student') {
+  rowNumbersCol.style.transform = "translateY(82px)";
+} else {
+ rowNumbersCol.style.transform = "";
+}   
+
+    // 移除原有的transform偏移样式
+   // rowNumbersCol.style.transform = "";
+    //rowNumbersCol.classList.remove('student-view-row-numbers');
+
+    // 新增学生视角行号列样式
+    if (currentView === 'student') {
+        rowNumbersCol.classList.add('student-view-row-numbers');
+    } else {
+        rowNumbersCol.classList.remove('student-view-row-numbers');
+    }
+
+            updateUnassignedList();
+            saveData();
+        }
+
+// 新增随机分配函数
+function randomToEmptySeats() {
+    const unassigned = students.filter(s => !s.seat);
+    if (unassigned.length === 0) {
+        alert('没有未分配的学生！');
+        return;
+    }
+
+    // 获取所有空座位
+    const rows = getRows();
+    const cols = getCols();
+    const occupied = new Set();
+    students.forEach(s => s.seat && occupied.add(`${s.seat.row},${s.seat.col}`));
+
+    // 生成空座位列表
+    const emptySeats = [];
+    for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+            if (!occupied.has(`${row},${col}`)) {
+                emptySeats.push({ row, col });
+            }
+        }
+    }
+
+    // 按行优先级排序（教师视角：行号大的优先；学生视角：行号小的优先）
+// 修改后的行顺序定义
+const rowsOrder = currentView === 'teacher'
+    ? Array.from({length: rows}, (_, i) => i)           // 教师视角正序
+    : Array.from({length: rows}, (_, i) => rows - 1 - i); // 学生视角倒序
+
+    // 优先分配靠前的行，每行内随机列顺序
+    const prioritizedSeats = [];
+    rowsOrder.forEach(row => {
+        const rowSeats = emptySeats.filter(s => s.row === row);
+        for (let i = rowSeats.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [rowSeats[i], rowSeats[j]] = [rowSeats[j], rowSeats[i]];
+        }
+        prioritizedSeats.push(...rowSeats);
+    });
+
+    if (prioritizedSeats.length < unassigned.length) {
+        const diff = unassigned.length - prioritizedSeats.length;
+        alert(`空座位数量不足，差${diff}个空座位，请增添行列。`);
+        return;
+    }
+
+    // 随机打乱未分配学生
+    for (let i = unassigned.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [unassigned[i], unassigned[j]] = [unassigned[j], unassigned[i]];
+    }
+
+    // 分配座位
+    unassigned.forEach((student, i) => {
+        student.seat = prioritizedSeats[i];
+    });
+
+    generateSeats();
+    saveData();
+}
+
+        function handleDragStart(e) {
+            if (!e.target.classList.contains('occupied')) return;
+            e.dataTransfer.setData('text/plain', JSON.stringify({
+                row: parseInt(e.target.dataset.row),
+                col: parseInt(e.target.dataset.col)
+            }));
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+        }
+
+// 修改后的handleDrop函数
+function handleDrop(e) {
+    e.preventDefault();
+    const seatElement = e.target.closest('.seat');
+    if (!seatElement) return;
+
+    const dataText = e.dataTransfer.getData('text/plain');
+    let data;
+    try {
+        data = JSON.parse(dataText);
+    } catch (error) {
+        if (!isNaN(dataText)) {
+            data = { type: 'row', row: parseInt(dataText) };
+        } else {
+            return;
+        }
+    }
+
+    const targetCol = parseInt(seatElement.dataset.col);
+    const targetRow = parseInt(seatElement.dataset.row);
+
+    if (data.type === 'unassigned') {
+        // 处理未分配学生...
+                const student = students.find(s => s.id === data.id);
+                const existing = students.find(s => 
+                    s.seat?.row === targetRow && 
+                    s.seat?.col === targetCol
+                );
+                
+                if (existing) {
+                    alert('该座位已有学生，请拖曳到空座位处。');
+                    return;
+                }
+                
+                student.seat = { row: targetRow, col: targetCol };
+                generateSeats();
+                return;
+
+    } else if (data.type === 'row' || data.type === 'group') {
+        const unassigned = students.filter(s => !s.seat);
+        if (unassigned.length === 0) {
+            alert('未分配学生列表已空');
+            return;
+        }
+        const student = unassigned[0];
+        const existing = students.find(s => 
+            s.seat?.row === targetRow && 
+            s.seat?.col === targetCol
+        );
+        if (existing) {
+            alert('该座位已有学生');
+            return;
+        }
+        student.seat = { row: targetRow, col: targetCol };
+        generateSeats();
+        saveData();
+    } else {
+        // 处理座位交换...
+            const sourceStudent = students.find(s => 
+                s.seat?.row == data.row && 
+                s.seat?.col == data.col
+            );
+            const targetStudent = students.find(s => 
+                s.seat?.row == targetRow && 
+                s.seat?.col == targetCol
+            );
+
+            if (sourceStudent) sourceStudent.seat = { row: targetRow, col: targetCol };
+            if (targetStudent) targetStudent.seat = { row: data.row, col: data.col };
+            
+            generateSeats();
+    }
+}
+
+
+// 新增移动功能函数
+function moveColumn(direction) {
+    const cols = getCols();
+    students.forEach(student => {
+        if (student.seat) {
+            let newCol = student.seat.col + direction;
+            if (newCol < 0) newCol = cols - 1;
+            if (newCol >= cols) newCol = 0;
+            student.seat.col = newCol;
+        }
+    });
+    generateSeats();
+    saveData();
+}
+
+function moveRow(direction) {
+    const rows = getRows();
+    students.forEach(student => {
+        if (student.seat) {
+            let newRow = student.seat.row + direction;
+            if (newRow < 0) newRow = rows - 1;
+            if (newRow >= rows) newRow = 0;
+            student.seat.row = newRow;
+        }
+    });
+    generateSeats();
+    saveData();
+}
+
+
+
+
+
+// 新增行号拖拽处理函数
+function handleRowDragStart(e) {
+    e.dataTransfer.setData('text/plain', e.target.dataset.row);
+}
+
+
+// 修改后的handleRowDrop函数
+function handleRowDrop(e) {
+    e.preventDefault();
+    const dataText = e.dataTransfer.getData('text/plain');
+    let data;
+    try {
+        data = JSON.parse(dataText);
+    } catch (error) {
+        return;
+    }
+
+    if (data.row !== undefined && data.col !== undefined) {
+        const student = students.find(s => 
+            s.seat?.row === data.row && 
+            s.seat?.col === data.col
+        );
+        if (student) {
+            student.seat = null;
+            generateSeats();
+            saveData();
+            return;
+        }
+    }
+
+    const sourceRow = parseInt(dataText);
+    const targetRow = parseInt(e.target.dataset.row);
+    // 交换行逻辑...
+    // 交换两行学生数据
+    const sourceStudents = students.filter(s => s.seat?.row === sourceRow);
+    const targetStudents = students.filter(s => s.seat?.row === targetRow);
+
+    sourceStudents.forEach(s => s.seat.row = targetRow);
+    targetStudents.forEach(s => s.seat.row = sourceRow);
+
+    generateSeats();
+    saveData();
+}
+
+        // 修改右键处理函数
+        // 修改后的删除处理函数
+        function handleRightClick(e) {
+            e.preventDefault();
+            
+            // 处理座位删除
+            const seatElement = e.target.closest('.seat');
+            if (seatElement && seatElement.dataset.studentId) {
+                const student = students.find(s => s.id === parseFloat(seatElement.dataset.studentId));
+                if (student) {
+                    student.seat = null;
+                    generateSeats();
+                    saveData();
+                }
+                return;
+            }
+            
+            // 处理未分配列表删除
+            const liElement = e.target.closest('li');
+            if (liElement && liElement.dataset.id) {
+                if (confirm('确定要永久删除该学生吗？')) {
+                    students = students.filter(s => s.id !== parseFloat(liElement.dataset.id));
+                    updateUnassignedList();
+                    saveData();
+                }
+            }
+        }
+
+        function clearUnassignedStudents() {
+            if (confirm('确定要清空所有未分配学生吗？')) {
+                students = students.filter(s => s.seat !== null);
+                updateUnassignedList();
+                saveData();
+            }
+        }
+
+        function clearAllData() {
+            if (confirm('确定要清空所有数据吗？此操作不可逆！')) {
+                localStorage.clear();
+                students = [];
+                currentAisles = [];
+                document.getElementById('rows').value = 7;
+                document.getElementById('cols').value = 8;
+                currentView = 'teacher';
+                document.getElementById('viewToggle').textContent = '教师视角';
+                generateSeats();
+            }
+        }
+
+        function updateUnassignedList() {
+            const list = document.getElementById('unassignedList');
+            list.innerHTML = '';
+            students.filter(s => !s.seat).forEach(student => {
+                const li = document.createElement('li');
+                li.textContent = student.name;
+                li.draggable = true;
+                li.dataset.id = student.id;
+                li.addEventListener('dragstart', handleUnassignedDragStart);
+                li.addEventListener('contextmenu', handleRightClick);
+                list.appendChild(li);
+            });
+        }
+
+        function handleUnassignedDragStart(e) {
+            e.dataTransfer.setData('text/plain', JSON.stringify({
+                type: 'unassigned',
+                id: parseFloat(e.target.dataset.id)
+            }));
+        }
+
+        function handleGroupDragStart(e) {
+            e.dataTransfer.setData('text/plain', JSON.stringify({
+                type: 'group',
+                col: parseInt(e.target.dataset.col)
+            }));
+        }
+
+
+// 修改后的handleGroupDrop函数
+function handleGroupDrop(e) {
+    e.preventDefault();
+    const dataText = e.dataTransfer.getData('text/plain');
+    let data;
+    try {
+        data = JSON.parse(dataText);
+    } catch (error) {
+        return;
+    }
+
+    if (data.row !== undefined && data.col !== undefined) {
+        const student = students.find(s => 
+            s.seat?.row === data.row && 
+            s.seat?.col === data.col
+        );
+        if (student) {
+            student.seat = null;
+            generateSeats();
+            saveData();
+            return;
+        }
+    }
+    // 交换列逻辑...
+            const sourceData = JSON.parse(e.dataTransfer.getData('text/plain'));
+            const targetCol = parseInt(e.target.closest('.group-container').dataset.col);
+            
+            students.forEach(s => {
+                if (s.seat?.col === sourceData.col) {
+                    s.seat.col = targetCol;
+                } else if (s.seat?.col === targetCol) {
+                    s.seat.col = sourceData.col;
+                }
+            });
+            
+            generateSeats();
+}
+
+        function toggleAisle(col) {
+            const index = currentAisles.indexOf(col);
+            if (index === -1) {
+                currentAisles.push(col);
+            } else {
+                currentAisles.splice(index, 1);
+            }
+            generateSeats();
+        }
+
+
+
+function exportExcel() {
+    try {
+        const rows = getRows();
+        const cols = getCols();
+        const data = [];
+        const merges = [];
+
+        // 列顺序处理
+        const displayCols = currentView === 'teacher' 
+            ? Array.from({length: cols}, (_, i) => i)
+            : Array.from({length: cols}, (_, i) => cols - 1 - i);
+
+        // 生成带过道的列结构
+        const colsWithAisles = [];
+        displayCols.forEach(col => {
+            if(currentView === 'teacher' && currentAisles.includes(col)) {
+                colsWithAisles.push(null); // 教师视角：左侧过道
+            }
+            colsWithAisles.push(col);
+            if(currentView === 'student' && currentAisles.includes(col)) {
+                colsWithAisles.push(null); // 学生视角：右侧过道
+            }
+        });
+
+        // 添加标题（合并所有列）
+        data.push(['座位表']);
+        merges.push({ s: { r: 0, c: 0 }, e: { r: 0, c: colsWithAisles.length - 1 } });
+
+        // 添加空行作为间距
+        data.push([]);
+
+        // 生成学生数据
+        const rowsOrder = currentView === 'teacher' 
+            ? Array.from({length: rows}, (_, i) => rows - 1 - i)
+            : Array.from({length: rows}, (_, i) => i);
+
+        rowsOrder.forEach(logicalRow => {
+            const rowData = [];
+            colsWithAisles.forEach(col => {
+                rowData.push(col === null ? '' : 
+                    students.find(s => 
+                        s.seat?.row === logicalRow && 
+                        s.seat?.col === col
+                    )?.name || ''
+                );
+            });
+            data.push(rowData);
+        });
+
+        // 添加讲台行
+        const platformRow = new Array(colsWithAisles.length).fill('');
+        const mid = Math.floor((colsWithAisles.length - 1)/2);
+        platformRow[mid] = platformRow[mid + 1] = '讲台';
+        data.push([], platformRow);
+
+        // 合并讲台单元格
+        const platformRowIndex = data.length - 1;
+        merges.push({ 
+            s: { r: platformRowIndex, c: mid }, 
+            e: { r: platformRowIndex, c: mid + 1 } 
+        });
+
+        // 创建工作表
+        const ws = XLSX.utils.aoa_to_sheet(data);
+        ws['!merges'] = merges;
+
+        // 设置全局样式
+        const range = XLSX.utils.decode_range(ws['!ref']);
+        for(let R = range.s.r; R <= range.e.r; ++R) {
+            for(let C = range.s.c; C <= range.e.c; ++C) {
+                const cell = XLSX.utils.encode_cell({r:R, c:C});
+                if(!ws[cell]) ws[cell] = { t: 's', v: '' };
+
+                // 基础样式
+                ws[cell].s = {
+                    border: {
+                        top:    { style: 'thin', color: { rgb: "000000" } },
+                        left:   { style: 'thin', color: { rgb: "000000" } },
+                        bottom: { style: 'thin', color: { rgb: "000000" } },
+                        right:  { style: 'thin', color: { rgb: "000000" } }
+                    },
+                    alignment: { 
+                        horizontal: "center",
+                        vertical: "center",
+                        wrapText: true
+                    },
+                    font: {
+                        name: "宋体",
+                        sz: 14
+                    }
+                };
+
+                // 标题样式
+                if(R === 0) {
+                    ws[cell].s.font = { 
+                        sz: 18,
+                        bold: true,
+                        color: { rgb: "2C3E50" }
+                    };
+                    ws[cell].s.fill = {
+                        patternType: "solid",
+                        fgColor: { rgb: "F0F0F0" }
+                    };
+                }
+
+                // 讲台样式
+                if(R === platformRowIndex && (C === mid || C === mid + 1)) {
+                    ws[cell].s.fill = {
+                        patternType: "solid",
+                        fgColor: { rgb: "E0E0E0" }
+                    };
+                    ws[cell].s.font = { bold: true, sz: 14 };
+                }
+            }
+        }
+
+        // 设置行列尺寸
+        ws['!rows'] = [{ hpx: 40 }]; // 标题行高度
+        for(let i = 1; i < data.length; i++) {
+            ws['!rows'][i] = { hpx: 30 }; // 数据行高度
+        }
+        ws['!cols'] = colsWithAisles.map(() => ({ wpx: 100 })); // 列宽
+
+        // 生成文件
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, '座位表');
+        XLSX.writeFile(wb, `座位表_${new Date().toLocaleDateString()}.xlsx`);
+    } catch (error) {
+        console.error('导出失败:', error);
+        alert('导出失败，请检查控制台错误信息');
+    }
+}
+
+
+
+
+
+        function saveData() {
+            const data = {
+                students,
+                currentAisles,
+                rows: getRows(),
+                cols: getCols(),
+                currentView
+            };
+            localStorage.setItem('seatData', JSON.stringify(data));
+        }
+
+        function loadData() {
+            const data = JSON.parse(localStorage.getItem('seatData'));
+            if (data) {
+                students = data.students || [];
+                currentAisles = data.currentAisles || [];
+                document.getElementById('rows').value = data.rows || 7;
+                document.getElementById('cols').value = data.cols || 8;
+                currentView = data.currentView || 'teacher';
+                document.getElementById('viewToggle').textContent = 
+                    currentView === 'teacher' ? '教师视角' : '学生视角';
+            }
+        }
+
+        function toggleView() {
+            currentView = currentView === 'teacher' ? 'student' : 'teacher';
+            document.getElementById('viewToggle').textContent = 
+                currentView === 'teacher' ? '教师视角' : '学生视角';
+            generateSeats();
+        }
+
+        function addStudents() {
+            const list = document.getElementById('studentList').value
+                .split('\n')
+                .map(name => name.trim())
+                .filter(name => name !== '');
+
+            list.forEach(name => {
+                students.push({
+                    id: Date.now() + Math.random(),
+                    name: name,
+                    seat: null
+                });
+            });
+            hideStudentModal();
+            generateSeats();
+        }
+
+        window.onload = initialize;
+    </script>
+   <script>
+        // 在updateUnassignedList函数中添加人数更新
+        function updateUnassignedList() {
+            const list = document.getElementById('unassignedList');
+            list.innerHTML = '';
+            const unassigned = students.filter(s => !s.seat);
+            // 更新人数显示
+            document.getElementById('unassignedCount').textContent = unassigned.length;
+            
+            unassigned.forEach(student => {
+                const li = document.createElement('li');
+                li.textContent = student.name;
+                li.draggable = true;
+                li.dataset.id = student.id;
+                li.addEventListener('dragstart', handleUnassignedDragStart);
+                li.addEventListener('contextmenu', handleRightClick);
+                list.appendChild(li);
+            });
+        }
+
+        // 添加导出系统数据功能
+        function exportSystemData() {
+            const data = {
+                students,
+                currentAisles,
+                rows: getRows(),
+                cols: getCols(),
+                currentView
+            };
+            const blob = new Blob([JSON.stringify(data)], {type: "application/json"});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `座位系统数据_${new Date().toLocaleDateString()}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // 添加导入数据功能
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    students = data.students || [];
+                    currentAisles = data.currentAisles || [];
+                    document.getElementById('rows').value = data.rows || 7;
+                    document.getElementById('cols').value = data.cols || 8;
+                    currentView = data.currentView || 'teacher';
+                    document.getElementById('viewToggle').textContent = 
+                        currentView === 'teacher' ? '教师视角' : '学生视角';
+                    generateSeats();
+                } catch (error) {
+                    alert('文件格式错误，导入失败');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // 其他原有函数保持不变...
+ // 删除区域拖放处理
+        function handleDeleteDragOver(e) {
+            e.preventDefault();
+            e.target.classList.add('dragover');
+        }
+
+        function handleDeleteDragLeave(e) {
+            e.target.classList.remove('dragover');
+        }
+
+        // 修改后的拖放删除处理
+        function handleDeleteDrop(e) {
+            e.preventDefault();
+            const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+            
+            if (data.type === 'unassigned') {
+                if (confirm('确定要永久删除该学生吗？')) {
+                    students = students.filter(s => s.id !== data.id);
+                    updateUnassignedList();
+                    saveData();
+                }
+            } else if (data.row !== undefined) {
+                const student = students.find(s => 
+                    s.seat?.row === data.row && 
+                    s.seat?.col === data.col
+                );
+                if (student) {
+                    student.seat = null;
+                    generateSeats();
+                    saveData();
+                }
+            }
+            
+            e.target.classList.remove('dragover');
+        }
+
+        // 统一删除方法
+        function deleteStudentById(id) {
+            if (confirm('确定要删除该学生吗？')) {
+                students = students.filter(s => s.id !== parseFloat(id));
+                generateSeats();
+                saveData();
+            }
+        }
+
+// 新增清空座位学生功能
+function clearSeatStudents() {
+    if (confirm('确定要清空所有座位上的学生吗？')) {
+        students.forEach(student => {
+            if (student.seat) {
+                student.seat = null;
+            }
+        });
+        generateSeats();
+        saveData();
+    }
+}
+</script>
+
+
+<script>
+function exportPDF() {
+    const cloneNode = document.getElementById('seatGrid').cloneNode(true);
+    
+    // 创建样式调整
+    const style = document.createElement('style');
+    style.innerHTML = `
+        /* 隐藏非必要元素 */
+        .row-numbers, 
+        .control-bars,
+        .group-header, 
+        .aisle-button,
+        .row-number { 
+            display: none !important; 
+        }
+        
+        /* 座位行样式调整 */
+        .seat-row {
+            gap: 0 !important;      /* 去除列间间隙 */
+            margin-bottom: 15px;    /* 增加行间距 */
+        }
+        
+        /* 座位单元样式 */
+        .seat { 
+            border: 2px solid #000 !important;
+            background: white !important;
+            color: black !important;
+            margin: 0 1px !important; /* 横向微间距 */
+            width: 78px !important;   /* 保持原有宽度 */
+        }
+        
+        /* 过道列样式 */
+        .group-container[style*="margin"] {
+            margin: 0 40px !important; /* 保持过道宽度 */
+        }
+        
+        /* 讲台样式优化 */
+       .platform {
+            width: 160px !important;
+            border: 2px solid #000 !important;
+            background: #808080 !important;
+            font-size: 22px !important;
+            font-weight: bold !important;
+            margin: 0px auto !important;  /* 上下增加间距 */
+            position: relative;
+        }
+        
+        /* 添加讲台前分隔线 */
+       // .platform::before {
+           // content: '';
+            //display: block;
+            //height: 15px;
+           // width: 100%;
+        //}
+    `;
+
+    cloneNode.appendChild(style);
+
+    // 处理讲台显示
+    const platform = cloneNode.querySelector('.platform');
+    if (platform) {
+        platform.innerHTML = '<div style="margin:auto">讲台</div>';
+    }
+
+
+
+    // 隐藏原始元素并添加克隆节点
+    const original = document.getElementById('seatGrid');
+    original.style.visibility = 'hidden';
+    document.body.appendChild(cloneNode);
+
+    html2canvas(cloneNode, {
+        scale: 2,
+        backgroundColor: null,
+        logging: true
+    }).then(canvas => {
+        const pdf = new jspdf.jsPDF({
+            orientation: 'landscape',
+            unit: 'mm',
+            format: 'a4'
+        });
+
+        // 计算缩放比例
+        const imgRatio = Math.min(280 / canvas.width, 190 / canvas.height);
+        const imgWidth = canvas.width * imgRatio;
+        const imgHeight = canvas.height * imgRatio;
+
+        // 居中添加图片
+        const x = (297 - imgWidth) / 2;
+        const y = (210 - imgHeight) / 2;
+        pdf.addImage(canvas, 'PNG', x, y, imgWidth, imgHeight);
+
+        // 清理DOM
+        document.body.removeChild(cloneNode);
+        original.style.visibility = 'visible';
+
+        pdf.save(`座位表_${new Date().toLocaleDateString()}.pdf`);
+    }).catch(error => {
+        console.error('导出失败:', error);
+        alert('PDF导出失败');
+    });
+}
+</script>
+
+
+</body>
+</html>
