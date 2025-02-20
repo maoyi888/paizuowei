@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-<!-- ÔÚhead±êÇ©ÄÚÌí¼Óhtml2canvas¿âÒıÓÃ -->
+<!-- åœ¨headæ ‡ç­¾å†…æ·»åŠ html2canvasåº“å¼•ç”¨ -->
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <meta charset="UTF-8">
-    <title>ÖÇÄÜ×ùÎ»±àÅÅÏµÍ³</title>
+    <title>æ™ºèƒ½åº§ä½ç¼–æ’ç³»ç»Ÿ</title>
     <style>
         body { 
             padding: 20px; 
@@ -25,7 +25,7 @@
             max-width: 90%;
             overflow-x: auto;
         }
-        /* ĞÂÔö¾ÓÖĞÈİÆ÷ÑùÊ½ */
+        /* æ–°å¢å±…ä¸­å®¹å™¨æ ·å¼ */
         .main-container {
             width: 100%;
             max-width: 1200px;
@@ -34,16 +34,16 @@
             align-items: center;
         }
         .platform { background: #f0f0f0; padding: 15px; text-align: center; font-weight: bold; }
-/* µ÷Õû×ùÎ»ĞĞ²¼¾Ö */
+/* è°ƒæ•´åº§ä½è¡Œå¸ƒå±€ */
 .seat-row {
     display: flex;
     flex-direction: row;
     gap: 20px;
-    justify-content: flex-start; /* ĞŞ¸ÄÎª×ó¶ÔÆë */
+    justify-content: flex-start; /* ä¿®æ”¹ä¸ºå·¦å¯¹é½ */
     flex-wrap: nowrap;
     padding-left: 10px;
 }
-        /* ĞÂÔö¹ıµÀ°´Å¥ÑùÊ½ */
+        /* æ–°å¢è¿‡é“æŒ‰é’®æ ·å¼ */
         .aisle-button {
             margin: 10px 0;
             white-space: nowrap;
@@ -56,7 +56,7 @@
             cursor: move; background: white; transition: all 0.2s;
         }
         .occupied { background: #e3f2fd; }
-        /* ĞŞ¸Ä¿Ø¼şÈİÆ÷ÑùÊ½ */
+        /* ä¿®æ”¹æ§ä»¶å®¹å™¨æ ·å¼ */
         .controls { 
             display: flex; 
             gap: 10px; 
@@ -64,14 +64,14 @@
             flex-wrap: wrap;
             justify-content: center;
         }
-        /* ĞÂÔöÁĞÍ·¾ÓÖĞÑùÊ½ */
+        /* æ–°å¢åˆ—å¤´å±…ä¸­æ ·å¼ */
         .group-header {
             text-align: center;
             width: 100%;
         }
         textarea { width: 300px; height: 100px; }
        // #unassignedStudents { margin-top: 20px; border-top: 2px solid #ccc; padding: 15px; }
-        /* ÓÅ»¯Î´·ÖÅäÇøÓò¾ÓÖĞ */
+        /* ä¼˜åŒ–æœªåˆ†é…åŒºåŸŸå±…ä¸­ */
         #unassignedStudents {
             width: 100%;
             max-width: 1200px;
@@ -83,13 +83,13 @@
                 background: white; padding: 20px; border: 1px solid #ccc; box-shadow: 0 0 10px rgba(0,0,0,0.1); 
                 z-index: 1000; }
         .danger-button { background: #ff4444; color: white; border: none; padding: 8px 12px; border-radius: 4px; }
-        /* Ìí¼Ó±êÌâÑùÊ½ */
+        /* æ·»åŠ æ ‡é¢˜æ ·å¼ */
         h1.title {
             text-align: center;
             color: #2c3e50;
             margin-bottom: 30px;
         }
-        /* Ìí¼ÓÉ¾³ıÇøÓòÑùÊ½ */
+        /* æ·»åŠ åˆ é™¤åŒºåŸŸæ ·å¼ */
         .delete-dropzone {
             width: 120px; 
             height: 40px;
@@ -105,7 +105,7 @@
         .delete-dropzone.dragover {
             background: #ffcccc;
         }
-        /* ĞÂÔöÉ¾³ıÇøÓò²¼¾ÖÑùÊ½ */
+        /* æ–°å¢åˆ é™¤åŒºåŸŸå¸ƒå±€æ ·å¼ */
         #unassignedStudents h3 {
             display: flex;
             align-items: center;
@@ -116,7 +116,7 @@
             margin-left: 0;
             flex-shrink: 0;
         }
-   /* ĞÂÔö½²Ì¨ÑùÊ½ */
+   /* æ–°å¢è®²å°æ ·å¼ */
     .platform { 
         background: #808080 !important; 
         width: 160px;
@@ -126,7 +126,7 @@
         padding: 15px;
         text-align: center;
     }
-/* ĞŞ¸ÄĞĞºÅÁĞÑùÊ½ */
+/* ä¿®æ”¹è¡Œå·åˆ—æ ·å¼ */
 .row-numbers {
     display: flex;
     flex-direction: column;
@@ -137,12 +137,12 @@
     z-index: 1;
     flex-shrink: 0;
     min-width: 100px;
-    /* ĞÂÔö¾«È·¼ä¾àµ÷Õû */
-    gap: 10px; /* Ô­Îª10px£¬Ôö´ó¼ä¾à */
-    padding: 1px 0; /* Ôö¼ÓÉÏÏÂÄÚ±ß¾à */
+    /* æ–°å¢ç²¾ç¡®é—´è·è°ƒæ•´ */
+    gap: 10px; /* åŸä¸º10pxï¼Œå¢å¤§é—´è· */
+    padding: 1px 0; /* å¢åŠ ä¸Šä¸‹å†…è¾¹è· */
 }
 
-/* µ÷ÕûĞĞºÅÏî¸ß¶ÈºÍ¼ä¾à */
+/* è°ƒæ•´è¡Œå·é¡¹é«˜åº¦å’Œé—´è· */
 .row-number {
     height: 40px;
     display: flex;
@@ -152,11 +152,11 @@
     border: 1px dashed #ccc;
     cursor: move;
     font-weight: bold;
-    /* ĞÂÔö¶ÔÆëĞŞÕı */
-    margin: 1px 0; /* Ôö¼Ó´¹Ö±Íâ±ß¾à */
-    transform: translateY(0px); /* Î¢µ÷´¹Ö±Î»ÖÃ */
+    /* æ–°å¢å¯¹é½ä¿®æ­£ */
+    margin: 1px 0; /* å¢åŠ å‚ç›´å¤–è¾¹è· */
+    transform: translateY(0px); /* å¾®è°ƒå‚ç›´ä½ç½® */
 }
-/* ĞÂÔö¿ØÖÆÌõÑùÊ½ */
+/* æ–°å¢æ§åˆ¶æ¡æ ·å¼ */
 //.control-bars {
     //gap: 30px;
 //}
@@ -164,17 +164,17 @@
     //display: flex;
    // gap: 2px;
 //}
-/* ĞŞ¸Ä´¹Ö±·½Ïò¿ØÖÆÌõ¼ä¾à */
+/* ä¿®æ”¹å‚ç›´æ–¹å‘æ§åˆ¶æ¡é—´è· */
 .control-bar.vertical {
     flex-direction: column;
-    gap: 10px !important; /* ´Ó2px¸ÄÎª10px */
+    gap: 10px !important; /* ä»2pxæ”¹ä¸º10px */
 }
-/* µ÷ÕûĞĞºÅÁĞÈİÆ÷¶¨Î» */
+/* è°ƒæ•´è¡Œå·åˆ—å®¹å™¨å®šä½ */
 .row-numbers {
     position: relative;
-    margin: 0 40px; /* Îª¿ØÖÆÌõÁô³ö¿Õ¼ä */
+    margin: 0 40px; /* ä¸ºæ§åˆ¶æ¡ç•™å‡ºç©ºé—´ */
 }
-/* ĞŞ¸Ä¿ØÖÆÌõ¶¨Î»ÑùÊ½ */
+/* ä¿®æ”¹æ§åˆ¶æ¡å®šä½æ ·å¼ */
 .teacher-controls {
     position: absolute;
     bottom: -30px;
@@ -190,18 +190,18 @@
     transform: translateX(-50%);
     white-space: nowrap;
 }
-/* ĞŞ¸Ä¿ØÖÆÌõ°´Å¥³ß´ç */
+/* ä¿®æ”¹æ§åˆ¶æ¡æŒ‰é’®å°ºå¯¸ */
 .control-bar button {
-    height: 25px !important;  /* Í³Ò»¸ß¶È */
-    width: 60px !important;  /* Í³Ò»¿í¶È */
+    height: 25px !important;  /* ç»Ÿä¸€é«˜åº¦ */
+    width: 60px !important;  /* ç»Ÿä¸€å®½åº¦ */
     margin: 2px !important;
 }
-/* Ñ§ÉúÊÓ½ÇÏÂÒÆ²¹³¥µ÷Õû */
+/* å­¦ç”Ÿè§†è§’ä¸‹ç§»è¡¥å¿è°ƒæ•´ */
 .row-numbers.student-view-row-numbers {
-    transform: translateY(56px); /* Ô­Îª58px£¬¼õÉÙ2px²¹³¥ */
-    margin-top: 18px;  /* Ô­Îª20px£¬¼õÉÙ2px */
+    transform: translateY(56px); /* åŸä¸º58pxï¼Œå‡å°‘2pxè¡¥å¿ */
+    margin-top: 18px;  /* åŸä¸º20pxï¼Œå‡å°‘2px */
 }
-/* ĞÂÔö°´Å¥²¼¾ÖÑùÊ½ */
+/* æ–°å¢æŒ‰é’®å¸ƒå±€æ ·å¼ */
 .control-bars {
     display: flex;
     flex-direction: column;
@@ -213,7 +213,7 @@
     gap: 10px;
 }
 
-/* ĞÂÔöÃÀ»¯ÑùÊ½ */
+/* æ–°å¢ç¾åŒ–æ ·å¼ */
 body {
     background: #f5f7fa;
 }
@@ -273,28 +273,28 @@ button:hover {
     background: #f8f9fa;
 }
 
-/* ¹ıµÀ°´Å¥ÑùÊ½ */
+/* è¿‡é“æŒ‰é’®æ ·å¼ */
 .aisle-button {
     background: #f0f0f0;
     color: #666;
 }
 
-/* ÒÆ¶¯°´Å¥ÑÕÉ« */
+/* ç§»åŠ¨æŒ‰é’®é¢œè‰² */
 .control-bar button {
-    background: #4CAF50; /* ÂÌÉ« */
+    background: #4CAF50; /* ç»¿è‰² */
 }
 
-/* Î£ÏÕ°´Å¥±£³ÖºìÉ« */
+/* å±é™©æŒ‰é’®ä¿æŒçº¢è‰² */
 .danger-button {
     background: #ff4444;
 }
 
-/* ĞÂÔöÍ¼±ê°´Å¥ÑùÊ½ */
+/* æ–°å¢å›¾æ ‡æŒ‰é’®æ ·å¼ */
 button i {
     margin-right: 5px;
 }
 
-/* ÔöÇ¿ÊÓ¾õĞ§¹û */
+/* å¢å¼ºè§†è§‰æ•ˆæœ */
 .seat {
     //border-radius: 8px;
     box-shadow: 0 3px 6px rgba(0,0,0,0.1);
@@ -313,9 +313,9 @@ button i {
     align-items: center;
 }
 
-/* ĞÂÔöÑÕÉ«Çø·Ö */
+/* æ–°å¢é¢œè‰²åŒºåˆ† */
 .control-bar button {
-    background: #4CAF50; /* ÂÌÉ«ÒÆ¶¯°´Å¥ */
+    background: #4CAF50; /* ç»¿è‰²ç§»åŠ¨æŒ‰é’® */
 }
 
 .aisle-button {
@@ -326,59 +326,59 @@ button i {
     </style>
 </head>
 <body>
- <!-- Ìí¼Ó±êÌâ -->
-    <h1 class="title">ÖÇÄÜ×ùÎ»±àÅÅÏµÍ³</h1>
+ <!-- æ·»åŠ æ ‡é¢˜ -->
+    <h1 class="title">æ™ºèƒ½åº§ä½ç¼–æ’ç³»ç»Ÿ</h1>
 
  <div class="controls">
     <div>
         <button onclick="document.getElementById('fileInput').click()">
-            <i class="fas fa-file-import"></i> µ¼ÈëÀúÊ·Êı¾İ
+            <i class="fas fa-file-import"></i> å¯¼å…¥å†å²æ•°æ®
         </button>
         <input type="file" id="fileInput" hidden onchange="importData(event)">
-        ĞĞÊı£º<input type="number" id="rows" min="1" value="7" style="width: 60px;">
-        ÁĞÊı£º<input type="number" id="cols" min="1" value="8" style="width: 60px;">
+        è¡Œæ•°ï¼š<input type="number" id="rows" min="1" value="7" style="width: 60px;">
+        åˆ—æ•°ï¼š<input type="number" id="cols" min="1" value="8" style="width: 60px;">
         <button onclick="generateSeats()">
-            <i class="fas fa-sync-alt"></i> Éú³É×ùÎ»²¼¾Ö
+            <i class="fas fa-sync-alt"></i> ç”Ÿæˆåº§ä½å¸ƒå±€
         </button>
     </div>
     <div>
         <button onclick="toggleView()" id="viewToggle">
-            <i class="fas fa-chalkboard-teacher"></i> ½ÌÊ¦ÊÓ½Ç
+            <i class="fas fa-chalkboard-teacher"></i> æ•™å¸ˆè§†è§’
         </button>
         <button onclick="showStudentModal()">
-            <i class="fas fa-users"></i> Ìí¼ÓÑ§Éú
+            <i class="fas fa-users"></i> æ·»åŠ å­¦ç”Ÿ
         </button>
         <button class="danger-button" onclick="clearSeatStudents()">
-            <i class="fas fa-trash-alt"></i> Çå¿Õ×ùÎ»
+            <i class="fas fa-trash-alt"></i> æ¸…ç©ºåº§ä½
         </button>
         <button class="danger-button" onclick="clearAllData()">
-            <i class="fas fa-broom"></i> È«²¿Çå¿Õ
+            <i class="fas fa-broom"></i> å…¨éƒ¨æ¸…ç©º
         </button>
         <button onclick="exportSystemData()">
-            <i class="fas fa-save"></i> ±£´æÊı¾İ
+            <i class="fas fa-save"></i> ä¿å­˜æ•°æ®
         </button>
         <button onclick="exportExcel()">
-            <i class="fas fa-file-excel"></i> µ¼³öExcel
+            <i class="fas fa-file-excel"></i> å¯¼å‡ºExcel
         </button>
         <button onclick="exportPDF()">
-            <i class="fas fa-file-pdf"></i> µ¼³öPDF
+            <i class="fas fa-file-pdf"></i> å¯¼å‡ºPDF
         </button>
     </div>
 </div>
 
 <div class="seat-grid" id="seatGrid"></div>
 
-    <!-- ĞŞ¸ÄÎ´·ÖÅäÑ§Éú±êÇ© -->
+    <!-- ä¿®æ”¹æœªåˆ†é…å­¦ç”Ÿæ ‡ç­¾ -->
     <div id="unassignedStudents">
-        <h3>Î´·ÖÅäÑ§Éú£¨<span id="unassignedCount">0</span>ÈË£©
-            <button class="danger-button" onclick="clearUnassignedStudents()" style="margin-left: 15px;">Ò»¼üÇå¿ÕÎ´·ÖÅä</button>
-           <button onclick="randomToEmptySeats()">Ëæ»úµ½¿Õ×ùÎ»</button>
-            <!-- ĞÂÔöÉ¾³ıÇøÓò -->
+        <h3>æœªåˆ†é…å­¦ç”Ÿï¼ˆ<span id="unassignedCount">0</span>äººï¼‰
+            <button class="danger-button" onclick="clearUnassignedStudents()" style="margin-left: 15px;">ä¸€é”®æ¸…ç©ºæœªåˆ†é…</button>
+           <button onclick="randomToEmptySeats()">éšæœºåˆ°ç©ºåº§ä½</button>
+            <!-- æ–°å¢åˆ é™¤åŒºåŸŸ -->
             <div class="delete-dropzone" 
                  ondragover="handleDeleteDragOver(event)"
                  ondragleave="handleDeleteDragLeave(event)"
                  ondrop="handleDeleteDrop(event)">
-                ÍÏÒ·µ½´Ë´¦É¾³ı
+                æ‹–æ›³åˆ°æ­¤å¤„åˆ é™¤
             </div>
         </h3>
         <ul id="unassignedList"></ul>
@@ -386,10 +386,10 @@ button i {
 
 
     <div id="studentModal" class="modal">
-        <h3>ÅúÁ¿Ìí¼ÓÑ§Éú£¨Ã¿ĞĞÒ»¸öĞÕÃû£©</h3>
+        <h3>æ‰¹é‡æ·»åŠ å­¦ç”Ÿï¼ˆæ¯è¡Œä¸€ä¸ªå§“åï¼‰</h3>
         <textarea id="studentList"></textarea><br>
-        <button onclick="addStudents()">Ìí¼ÓÑ§Éú</button>
-        <button onclick="hideStudentModal()">È¡Ïû</button>
+        <button onclick="addStudents()">æ·»åŠ å­¦ç”Ÿ</button>
+        <button onclick="hideStudentModal()">å–æ¶ˆ</button>
     </div>
 
 
@@ -401,7 +401,7 @@ button i {
 
         function initialize() {
      loadData();
-    generateSeats(); // È·±£Ê×´Î¼ÓÔØÊ±Éú³É×ùÎ»
+    generateSeats(); // ç¡®ä¿é¦–æ¬¡åŠ è½½æ—¶ç”Ÿæˆåº§ä½
     updateUnassignedList();
         }
 
@@ -429,18 +429,18 @@ button i {
     const newRows = getRows();
     const newCols = getCols();
     const oldRows = students.reduce((max, s) => Math.max(max, (s.seat?.row ?? -1) + 1), 0);
-    // ĞŞ¸ÄºóµÄĞĞÊı±ä»¯´¦ÀíÂß¼­
+    // ä¿®æ”¹åçš„è¡Œæ•°å˜åŒ–å¤„ç†é€»è¾‘
     if (newRows !== oldRows) {
         if (currentView === 'teacher') {
             if (newRows < oldRows) {
-                // ½ÌÊ¦ÊÓ½ÇÉ¾³ı¶¥²¿ĞĞ£¨Âß¼­ĞĞºÅ´óµÄĞĞ£©
+                // æ•™å¸ˆè§†è§’åˆ é™¤é¡¶éƒ¨è¡Œï¼ˆé€»è¾‘è¡Œå·å¤§çš„è¡Œï¼‰
                 students.forEach(s => {
                     if (s.seat && s.seat.row >= newRows) s.seat = null;
                 });
             }
         } else {
             if (newRows < oldRows) {
-                // Ñ§ÉúÊÓ½ÇÉ¾³ıµ×²¿ĞĞ£¨Âß¼­ĞĞºÅ´óµÄĞĞ£©
+                // å­¦ç”Ÿè§†è§’åˆ é™¤åº•éƒ¨è¡Œï¼ˆé€»è¾‘è¡Œå·å¤§çš„è¡Œï¼‰
                 students.forEach(s => {
                     if (s.seat && s.seat.row >= newRows) s.seat = null;
                 });
@@ -451,7 +451,7 @@ button i {
 
 
 
-    // ĞÂÔöÁĞÊı±ä»¯´¦Àí£¨¹Ø¼üĞŞ¸Ä²¿·Ö£©
+    // æ–°å¢åˆ—æ•°å˜åŒ–å¤„ç†ï¼ˆå…³é”®ä¿®æ”¹éƒ¨åˆ†ï¼‰
     const oldCols = students.reduce((max, s) => Math.max(max, (s.seat?.col ?? -1) + 1), 0);
     if (newCols < oldCols) {
         students.forEach(s => {
@@ -464,7 +464,7 @@ button i {
 
             const platformRow = document.createElement('div');
             platformRow.className = 'platform';
-            platformRow.textContent = '½²Ì¨';
+            platformRow.textContent = 'è®²å°';
 
             const seatRow = document.createElement('div');
             seatRow.className = 'seat-row';
@@ -473,7 +473,7 @@ button i {
 
 
 
-    // ĞŞ¸ÄºóµÄĞĞÁĞË³Ğò¶¨Òå
+    // ä¿®æ”¹åçš„è¡Œåˆ—é¡ºåºå®šä¹‰
     const rowsOrder = currentView === 'teacher' 
         ? Array.from({length: newRows}, (_, i) => newRows - 1 - i)
         : Array.from({length: newRows}, (_, i) => i);
@@ -489,8 +489,8 @@ button i {
 
                 const groupHeader = document.createElement('div');
                 groupHeader.className = 'group-header';
-               // groupHeader.textContent = `µÚ${String.fromCharCode(65 + logicalCol)}×é`;
-                groupHeader.textContent = `µÚ${logicalCol+1}ÁĞ`;
+               // groupHeader.textContent = `ç¬¬${String.fromCharCode(65 + logicalCol)}ç»„`;
+                groupHeader.textContent = `ç¬¬${logicalCol+1}åˆ—`;
                 groupHeader.draggable = true;
                 groupHeader.dataset.col = logicalCol;
                 groupHeader.addEventListener('dragstart', handleGroupDragStart);
@@ -501,13 +501,13 @@ button i {
 
             if (currentView === 'teacher') {
                 aisleBtn.textContent = currentAisles.includes(logicalCol) 
-                    ? '¡ûÒÆ³ı¹ıµÀ' 
-                    : '¡ûÌí¼Ó¹ıµÀ';
+                    ? 'â†ç§»é™¤è¿‡é“' 
+                    : 'â†æ·»åŠ è¿‡é“';
               aisleBtn.className = 'aisle-button';
             } else {
                 aisleBtn.textContent = currentAisles.includes(logicalCol) 
-                    ? 'ÒÆ³ı¹ıµÀ¡ú' 
-                    : 'Ìí¼Ó¹ıµÀ¡ú';
+                    ? 'ç§»é™¤è¿‡é“â†’' 
+                    : 'æ·»åŠ è¿‡é“â†’';
             aisleBtn.className = 'aisle-button';
             }
                 aisleBtn.onclick = () => toggleAisle(logicalCol);
@@ -518,24 +518,24 @@ button i {
                    // groupCol.style.marginLeft = '40px';
                // }
 
-            // ĞŞ¸Ä¹ıµÀ±ß¾à·½ÏòÒÔÊÊÓ¦ÊÓ½Ç
+            // ä¿®æ”¹è¿‡é“è¾¹è·æ–¹å‘ä»¥é€‚åº”è§†è§’
             if (currentAisles.includes(logicalCol)) {
                 if (currentView === 'teacher') {
-                    groupCol.style.marginLeft = '40px'; // ½ÌÊ¦ÊÓ½Ç×ó²à±ß¾à
+                    groupCol.style.marginLeft = '40px'; // æ•™å¸ˆè§†è§’å·¦ä¾§è¾¹è·
                 } else {
-                    groupCol.style.marginRight = '40px'; // Ñ§ÉúÊÓ½ÇÓÒ²à±ß¾à
+                    groupCol.style.marginRight = '40px'; // å­¦ç”Ÿè§†è§’å³ä¾§è¾¹è·
                 }
             }
 
-                // °´ĞĞË³ĞòÉú³É×ùÎ»
+                // æŒ‰è¡Œé¡ºåºç”Ÿæˆåº§ä½
                 rowsOrder.forEach(logicalRow => {
                     const seat = document.createElement('div');
                     seat.className = 'seat';
                     seat.draggable = true;
-                    seat.dataset.row = logicalRow; // ´æ´¢Âß¼­ĞĞºÅ
+                    seat.dataset.row = logicalRow; // å­˜å‚¨é€»è¾‘è¡Œå·
                     seat.dataset.col = logicalCol;
 
-                    // ²éÕÒÑ§ÉúÊ±Ê¼ÖÕÊ¹ÓÃÂß¼­×ø±ê
+                    // æŸ¥æ‰¾å­¦ç”Ÿæ—¶å§‹ç»ˆä½¿ç”¨é€»è¾‘åæ ‡
                     const student = students.find(s => 
                         s.seat?.row === logicalRow && 
                         s.seat?.col === logicalCol
@@ -557,7 +557,7 @@ button i {
 
 
 
-// ×éºÏÔªËØÊ±²»ÔÙ°üº¬ĞĞºÅÁĞ
+// ç»„åˆå…ƒç´ æ—¶ä¸å†åŒ…å«è¡Œå·åˆ—
 if (currentView === 'teacher') {
     groupContainer.appendChild(groupCol);
     groupContainer.appendChild(aisleBtn);
@@ -572,16 +572,16 @@ if (currentView === 'teacher') {
                 seatRow.appendChild(groupContainer);
             });
 
-            // ½²Ì¨Î»ÖÃ´¦Àí
+            // è®²å°ä½ç½®å¤„ç†
             if (currentView === 'teacher') {
                 seatGrid.appendChild(seatRow);
-                seatGrid.appendChild(platformRow); // ½²Ì¨ÔÚÏÂ
+                seatGrid.appendChild(platformRow); // è®²å°åœ¨ä¸‹
             } else {
-                seatGrid.appendChild(platformRow); // ½²Ì¨ÔÚÉÏ
+                seatGrid.appendChild(platformRow); // è®²å°åœ¨ä¸Š
                 seatGrid.appendChild(seatRow);
             }
 
-    // ´´½¨ĞĞºÅÁĞ£¨ÒÆ¶¯µ½Ñ­»·Íâ£©
+    // åˆ›å»ºè¡Œå·åˆ—ï¼ˆç§»åŠ¨åˆ°å¾ªç¯å¤–ï¼‰
     const rowNumbersCol = document.createElement('div');
     rowNumbersCol.className = 'row-numbers';
 
@@ -590,7 +590,7 @@ if (currentView === 'teacher') {
     rowsOrder.forEach(logicalRow => {
         const rowNumber = document.createElement('div');
         rowNumber.className = 'row-number';
-        rowNumber.textContent = `µÚ${logicalRow + 1}ĞĞ`;
+        rowNumber.textContent = `ç¬¬${logicalRow + 1}è¡Œ`;
         rowNumber.dataset.row = logicalRow;
         rowNumber.draggable = true;
         rowNumber.addEventListener('dragstart', handleRowDragStart);
@@ -599,71 +599,71 @@ if (currentView === 'teacher') {
         rowNumbersCol.appendChild(rowNumber);
     });
 
-    // ÔÚ½ÌÊ¦ÊÓ½ÇÏÂ½«ĞĞºÅÁĞÌí¼Óµ½×î×ó²à
+    // åœ¨æ•™å¸ˆè§†è§’ä¸‹å°†è¡Œå·åˆ—æ·»åŠ åˆ°æœ€å·¦ä¾§
     seatRow.appendChild(rowNumbersCol);
 
-// Ìí¼Ó¿ØÖÆÌõÈİÆ÷
+// æ·»åŠ æ§åˆ¶æ¡å®¹å™¨
 const controlBars = document.createElement('div');
 //controlBars.className = 'control-bars';
-    // µ÷Õû¿ØÖÆÌõÀàÃûÓ¦ÓÃ
+    // è°ƒæ•´æ§åˆ¶æ¡ç±»ååº”ç”¨
     controlBars.className = `control-bars ${currentView}-controls`;
 
-// ÉÏÒÆĞĞ°´Å¥
+// ä¸Šç§»è¡ŒæŒ‰é’®
 const upControl = document.createElement('div');
 upControl.className = 'control-bar';
 upControl.innerHTML = currentView === 'teacher' 
-    ? `<button onclick="moveRow(1)">¡üÉÏÒÆ</button>`
-    : `<button onclick="moveRow(-1)">¡üÉÏÒÆ</button>`;
+    ? `<button onclick="moveRow(1)">â†‘ä¸Šç§»</button>`
+    : `<button onclick="moveRow(-1)">â†‘ä¸Šç§»</button>`;
 
-// ×óÓÒÒÆ¶¯ÁĞ°´Å¥
+// å·¦å³ç§»åŠ¨åˆ—æŒ‰é’®
 const colControl = document.createElement('div');
 colControl.className = 'control-bar';
 colControl.innerHTML = currentView === 'teacher'
-    ? `<button onclick="moveColumn(-1)">¡û×óÒÆ</button>
-       <button onclick="moveColumn(1)">ÓÒÒÆ¡ú</button>`
-    : `<button onclick="moveColumn(1)">¡û×óÒÆ</button>
-       <button onclick="moveColumn(-1)">ÓÒÒÆ¡ú</button>`;
+    ? `<button onclick="moveColumn(-1)">â†å·¦ç§»</button>
+       <button onclick="moveColumn(1)">å³ç§»â†’</button>`
+    : `<button onclick="moveColumn(1)">â†å·¦ç§»</button>
+       <button onclick="moveColumn(-1)">å³ç§»â†’</button>`;
 
-// ÏÂÒÆĞĞ°´Å¥
+// ä¸‹ç§»è¡ŒæŒ‰é’®
 const downControl = document.createElement('div');
 downControl.className = 'control-bar';
 downControl.innerHTML = currentView === 'teacher'
-    ? `<button onclick="moveRow(-1)">ÏÂÒÆ¡ı</button>`
-    : `<button onclick="moveRow(1)">ÏÂÒÆ¡ı</button>`;
+    ? `<button onclick="moveRow(-1)">ä¸‹ç§»â†“</button>`
+    : `<button onclick="moveRow(1)">ä¸‹ç§»â†“</button>`;
 
 controlBars.appendChild(upControl);
 controlBars.appendChild(colControl);
 controlBars.appendChild(downControl);
 
-    // ¸ù¾İÊÓ½ÇÉèÖÃ¶¨Î»Àà
+    // æ ¹æ®è§†è§’è®¾ç½®å®šä½ç±»
     if (currentView === 'teacher') {
         controlBars.classList.add('teacher-controls');
     } else {
         controlBars.classList.add('student-controls');
     }
 
-    // ²åÈëµ½ĞĞºÅÁĞÖĞ
+    // æ’å…¥åˆ°è¡Œå·åˆ—ä¸­
     //rowNumbersCol.insertBefore(controlBars, rowNumbersCol.firstChild);
 
-    // ĞŞ¸Ä¿ØÖÆÌõ²åÈëÂß¼­
+    // ä¿®æ”¹æ§åˆ¶æ¡æ’å…¥é€»è¾‘
     if (currentView === 'teacher') {
         rowNumbersCol.appendChild(controlBars);
     } else {
         rowNumbersCol.insertBefore(controlBars, rowNumbersCol.firstChild);
     }
 
- // ĞÂÔöÑ§ÉúÊÓ½ÇÑùÊ½
+ // æ–°å¢å­¦ç”Ÿè§†è§’æ ·å¼
 if (currentView === 'student') {
   rowNumbersCol.style.transform = "translateY(82px)";
 } else {
  rowNumbersCol.style.transform = "";
 }   
 
-    // ÒÆ³ıÔ­ÓĞµÄtransformÆ«ÒÆÑùÊ½
+    // ç§»é™¤åŸæœ‰çš„transformåç§»æ ·å¼
    // rowNumbersCol.style.transform = "";
     //rowNumbersCol.classList.remove('student-view-row-numbers');
 
-    // ĞÂÔöÑ§ÉúÊÓ½ÇĞĞºÅÁĞÑùÊ½
+    // æ–°å¢å­¦ç”Ÿè§†è§’è¡Œå·åˆ—æ ·å¼
     if (currentView === 'student') {
         rowNumbersCol.classList.add('student-view-row-numbers');
     } else {
@@ -674,21 +674,21 @@ if (currentView === 'student') {
             saveData();
         }
 
-// ĞÂÔöËæ»ú·ÖÅäº¯Êı
+// æ–°å¢éšæœºåˆ†é…å‡½æ•°
 function randomToEmptySeats() {
     const unassigned = students.filter(s => !s.seat);
     if (unassigned.length === 0) {
-        alert('Ã»ÓĞÎ´·ÖÅäµÄÑ§Éú£¡');
+        alert('æ²¡æœ‰æœªåˆ†é…çš„å­¦ç”Ÿï¼');
         return;
     }
 
-    // »ñÈ¡ËùÓĞ¿Õ×ùÎ»
+    // è·å–æ‰€æœ‰ç©ºåº§ä½
     const rows = getRows();
     const cols = getCols();
     const occupied = new Set();
     students.forEach(s => s.seat && occupied.add(`${s.seat.row},${s.seat.col}`));
 
-    // Éú³É¿Õ×ùÎ»ÁĞ±í
+    // ç”Ÿæˆç©ºåº§ä½åˆ—è¡¨
     const emptySeats = [];
     for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
@@ -698,13 +698,13 @@ function randomToEmptySeats() {
         }
     }
 
-    // °´ĞĞÓÅÏÈ¼¶ÅÅĞò£¨½ÌÊ¦ÊÓ½Ç£ºĞĞºÅ´óµÄÓÅÏÈ£»Ñ§ÉúÊÓ½Ç£ºĞĞºÅĞ¡µÄÓÅÏÈ£©
-// ĞŞ¸ÄºóµÄĞĞË³Ğò¶¨Òå
+    // æŒ‰è¡Œä¼˜å…ˆçº§æ’åºï¼ˆæ•™å¸ˆè§†è§’ï¼šè¡Œå·å¤§çš„ä¼˜å…ˆï¼›å­¦ç”Ÿè§†è§’ï¼šè¡Œå·å°çš„ä¼˜å…ˆï¼‰
+// ä¿®æ”¹åçš„è¡Œé¡ºåºå®šä¹‰
 const rowsOrder = currentView === 'teacher'
-    ? Array.from({length: rows}, (_, i) => i)           // ½ÌÊ¦ÊÓ½ÇÕıĞò
-    : Array.from({length: rows}, (_, i) => rows - 1 - i); // Ñ§ÉúÊÓ½Çµ¹Ğò
+    ? Array.from({length: rows}, (_, i) => i)           // æ•™å¸ˆè§†è§’æ­£åº
+    : Array.from({length: rows}, (_, i) => rows - 1 - i); // å­¦ç”Ÿè§†è§’å€’åº
 
-    // ÓÅÏÈ·ÖÅä¿¿Ç°µÄĞĞ£¬Ã¿ĞĞÄÚËæ»úÁĞË³Ğò
+    // ä¼˜å…ˆåˆ†é…é å‰çš„è¡Œï¼Œæ¯è¡Œå†…éšæœºåˆ—é¡ºåº
     const prioritizedSeats = [];
     rowsOrder.forEach(row => {
         const rowSeats = emptySeats.filter(s => s.row === row);
@@ -717,17 +717,17 @@ const rowsOrder = currentView === 'teacher'
 
     if (prioritizedSeats.length < unassigned.length) {
         const diff = unassigned.length - prioritizedSeats.length;
-        alert(`¿Õ×ùÎ»ÊıÁ¿²»×ã£¬²î${diff}¸ö¿Õ×ùÎ»£¬ÇëÔöÌíĞĞÁĞ¡£`);
+        alert(`ç©ºåº§ä½æ•°é‡ä¸è¶³ï¼Œå·®${diff}ä¸ªç©ºåº§ä½ï¼Œè¯·å¢æ·»è¡Œåˆ—ã€‚`);
         return;
     }
 
-    // Ëæ»ú´òÂÒÎ´·ÖÅäÑ§Éú
+    // éšæœºæ‰“ä¹±æœªåˆ†é…å­¦ç”Ÿ
     for (let i = unassigned.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [unassigned[i], unassigned[j]] = [unassigned[j], unassigned[i]];
     }
 
-    // ·ÖÅä×ùÎ»
+    // åˆ†é…åº§ä½
     unassigned.forEach((student, i) => {
         student.seat = prioritizedSeats[i];
     });
@@ -748,7 +748,7 @@ const rowsOrder = currentView === 'teacher'
             e.preventDefault();
         }
 
-// ĞŞ¸ÄºóµÄhandleDropº¯Êı
+// ä¿®æ”¹åçš„handleDropå‡½æ•°
 function handleDrop(e) {
     e.preventDefault();
     const seatElement = e.target.closest('.seat');
@@ -770,7 +770,7 @@ function handleDrop(e) {
     const targetRow = parseInt(seatElement.dataset.row);
 
     if (data.type === 'unassigned') {
-        // ´¦ÀíÎ´·ÖÅäÑ§Éú...
+        // å¤„ç†æœªåˆ†é…å­¦ç”Ÿ...
                 const student = students.find(s => s.id === data.id);
                 const existing = students.find(s => 
                     s.seat?.row === targetRow && 
@@ -778,7 +778,7 @@ function handleDrop(e) {
                 );
                 
                 if (existing) {
-                    alert('¸Ã×ùÎ»ÒÑÓĞÑ§Éú£¬ÇëÍÏÒ·µ½¿Õ×ùÎ»´¦¡£');
+                    alert('è¯¥åº§ä½å·²æœ‰å­¦ç”Ÿï¼Œè¯·æ‹–æ›³åˆ°ç©ºåº§ä½å¤„ã€‚');
                     return;
                 }
                 
@@ -789,7 +789,7 @@ function handleDrop(e) {
     } else if (data.type === 'row' || data.type === 'group') {
         const unassigned = students.filter(s => !s.seat);
         if (unassigned.length === 0) {
-            alert('Î´·ÖÅäÑ§ÉúÁĞ±íÒÑ¿Õ');
+            alert('æœªåˆ†é…å­¦ç”Ÿåˆ—è¡¨å·²ç©º');
             return;
         }
         const student = unassigned[0];
@@ -798,14 +798,14 @@ function handleDrop(e) {
             s.seat?.col === targetCol
         );
         if (existing) {
-            alert('¸Ã×ùÎ»ÒÑÓĞÑ§Éú');
+            alert('è¯¥åº§ä½å·²æœ‰å­¦ç”Ÿ');
             return;
         }
         student.seat = { row: targetRow, col: targetCol };
         generateSeats();
         saveData();
     } else {
-        // ´¦Àí×ùÎ»½»»»...
+        // å¤„ç†åº§ä½äº¤æ¢...
             const sourceStudent = students.find(s => 
                 s.seat?.row == data.row && 
                 s.seat?.col == data.col
@@ -823,7 +823,7 @@ function handleDrop(e) {
 }
 
 
-// ĞÂÔöÒÆ¶¯¹¦ÄÜº¯Êı
+// æ–°å¢ç§»åŠ¨åŠŸèƒ½å‡½æ•°
 function moveColumn(direction) {
     const cols = getCols();
     students.forEach(student => {
@@ -856,13 +856,13 @@ function moveRow(direction) {
 
 
 
-// ĞÂÔöĞĞºÅÍÏ×§´¦Àíº¯Êı
+// æ–°å¢è¡Œå·æ‹–æ‹½å¤„ç†å‡½æ•°
 function handleRowDragStart(e) {
     e.dataTransfer.setData('text/plain', e.target.dataset.row);
 }
 
 
-// ĞŞ¸ÄºóµÄhandleRowDropº¯Êı
+// ä¿®æ”¹åçš„handleRowDropå‡½æ•°
 function handleRowDrop(e) {
     e.preventDefault();
     const dataText = e.dataTransfer.getData('text/plain');
@@ -888,8 +888,8 @@ function handleRowDrop(e) {
 
     const sourceRow = parseInt(dataText);
     const targetRow = parseInt(e.target.dataset.row);
-    // ½»»»ĞĞÂß¼­...
-    // ½»»»Á½ĞĞÑ§ÉúÊı¾İ
+    // äº¤æ¢è¡Œé€»è¾‘...
+    // äº¤æ¢ä¸¤è¡Œå­¦ç”Ÿæ•°æ®
     const sourceStudents = students.filter(s => s.seat?.row === sourceRow);
     const targetStudents = students.filter(s => s.seat?.row === targetRow);
 
@@ -900,12 +900,12 @@ function handleRowDrop(e) {
     saveData();
 }
 
-        // ĞŞ¸ÄÓÒ¼ü´¦Àíº¯Êı
-        // ĞŞ¸ÄºóµÄÉ¾³ı´¦Àíº¯Êı
+        // ä¿®æ”¹å³é”®å¤„ç†å‡½æ•°
+        // ä¿®æ”¹åçš„åˆ é™¤å¤„ç†å‡½æ•°
         function handleRightClick(e) {
             e.preventDefault();
             
-            // ´¦Àí×ùÎ»É¾³ı
+            // å¤„ç†åº§ä½åˆ é™¤
             const seatElement = e.target.closest('.seat');
             if (seatElement && seatElement.dataset.studentId) {
                 const student = students.find(s => s.id === parseFloat(seatElement.dataset.studentId));
@@ -917,10 +917,10 @@ function handleRowDrop(e) {
                 return;
             }
             
-            // ´¦ÀíÎ´·ÖÅäÁĞ±íÉ¾³ı
+            // å¤„ç†æœªåˆ†é…åˆ—è¡¨åˆ é™¤
             const liElement = e.target.closest('li');
             if (liElement && liElement.dataset.id) {
-                if (confirm('È·¶¨ÒªÓÀ¾ÃÉ¾³ı¸ÃÑ§ÉúÂğ£¿')) {
+                if (confirm('ç¡®å®šè¦æ°¸ä¹…åˆ é™¤è¯¥å­¦ç”Ÿå—ï¼Ÿ')) {
                     students = students.filter(s => s.id !== parseFloat(liElement.dataset.id));
                     updateUnassignedList();
                     saveData();
@@ -929,7 +929,7 @@ function handleRowDrop(e) {
         }
 
         function clearUnassignedStudents() {
-            if (confirm('È·¶¨ÒªÇå¿ÕËùÓĞÎ´·ÖÅäÑ§ÉúÂğ£¿')) {
+            if (confirm('ç¡®å®šè¦æ¸…ç©ºæ‰€æœ‰æœªåˆ†é…å­¦ç”Ÿå—ï¼Ÿ')) {
                 students = students.filter(s => s.seat !== null);
                 updateUnassignedList();
                 saveData();
@@ -937,14 +937,14 @@ function handleRowDrop(e) {
         }
 
         function clearAllData() {
-            if (confirm('È·¶¨ÒªÇå¿ÕËùÓĞÊı¾İÂğ£¿´Ë²Ù×÷²»¿ÉÄæ£¡')) {
+            if (confirm('ç¡®å®šè¦æ¸…ç©ºæ‰€æœ‰æ•°æ®å—ï¼Ÿæ­¤æ“ä½œä¸å¯é€†ï¼')) {
                 localStorage.clear();
                 students = [];
                 currentAisles = [];
                 document.getElementById('rows').value = 7;
                 document.getElementById('cols').value = 8;
                 currentView = 'teacher';
-                document.getElementById('viewToggle').textContent = '½ÌÊ¦ÊÓ½Ç';
+                document.getElementById('viewToggle').textContent = 'æ•™å¸ˆè§†è§’';
                 generateSeats();
             }
         }
@@ -978,7 +978,7 @@ function handleRowDrop(e) {
         }
 
 
-// ĞŞ¸ÄºóµÄhandleGroupDropº¯Êı
+// ä¿®æ”¹åçš„handleGroupDropå‡½æ•°
 function handleGroupDrop(e) {
     e.preventDefault();
     const dataText = e.dataTransfer.getData('text/plain');
@@ -1001,7 +1001,7 @@ function handleGroupDrop(e) {
             return;
         }
     }
-    // ½»»»ÁĞÂß¼­...
+    // äº¤æ¢åˆ—é€»è¾‘...
             const sourceData = JSON.parse(e.dataTransfer.getData('text/plain'));
             const targetCol = parseInt(e.target.closest('.group-container').dataset.col);
             
@@ -1035,31 +1035,31 @@ function exportExcel() {
         const data = [];
         const merges = [];
 
-        // ÁĞË³Ğò´¦Àí
+        // åˆ—é¡ºåºå¤„ç†
         const displayCols = currentView === 'teacher' 
             ? Array.from({length: cols}, (_, i) => i)
             : Array.from({length: cols}, (_, i) => cols - 1 - i);
 
-        // Éú³É´ø¹ıµÀµÄÁĞ½á¹¹
+        // ç”Ÿæˆå¸¦è¿‡é“çš„åˆ—ç»“æ„
         const colsWithAisles = [];
         displayCols.forEach(col => {
             if(currentView === 'teacher' && currentAisles.includes(col)) {
-                colsWithAisles.push(null); // ½ÌÊ¦ÊÓ½Ç£º×ó²à¹ıµÀ
+                colsWithAisles.push(null); // æ•™å¸ˆè§†è§’ï¼šå·¦ä¾§è¿‡é“
             }
             colsWithAisles.push(col);
             if(currentView === 'student' && currentAisles.includes(col)) {
-                colsWithAisles.push(null); // Ñ§ÉúÊÓ½Ç£ºÓÒ²à¹ıµÀ
+                colsWithAisles.push(null); // å­¦ç”Ÿè§†è§’ï¼šå³ä¾§è¿‡é“
             }
         });
 
-        // Ìí¼Ó±êÌâ£¨ºÏ²¢ËùÓĞÁĞ£©
-        data.push(['×ùÎ»±í']);
+        // æ·»åŠ æ ‡é¢˜ï¼ˆåˆå¹¶æ‰€æœ‰åˆ—ï¼‰
+        data.push(['åº§ä½è¡¨']);
         merges.push({ s: { r: 0, c: 0 }, e: { r: 0, c: colsWithAisles.length - 1 } });
 
-        // Ìí¼Ó¿ÕĞĞ×÷Îª¼ä¾à
+        // æ·»åŠ ç©ºè¡Œä½œä¸ºé—´è·
         data.push([]);
 
-        // Éú³ÉÑ§ÉúÊı¾İ
+        // ç”Ÿæˆå­¦ç”Ÿæ•°æ®
         const rowsOrder = currentView === 'teacher' 
             ? Array.from({length: rows}, (_, i) => rows - 1 - i)
             : Array.from({length: rows}, (_, i) => i);
@@ -1077,31 +1077,31 @@ function exportExcel() {
             data.push(rowData);
         });
 
-        // Ìí¼Ó½²Ì¨ĞĞ
+        // æ·»åŠ è®²å°è¡Œ
         const platformRow = new Array(colsWithAisles.length).fill('');
         const mid = Math.floor((colsWithAisles.length - 1)/2);
-        platformRow[mid] = platformRow[mid + 1] = '½²Ì¨';
+        platformRow[mid] = platformRow[mid + 1] = 'è®²å°';
         data.push([], platformRow);
 
-        // ºÏ²¢½²Ì¨µ¥Ôª¸ñ
+        // åˆå¹¶è®²å°å•å…ƒæ ¼
         const platformRowIndex = data.length - 1;
         merges.push({ 
             s: { r: platformRowIndex, c: mid }, 
             e: { r: platformRowIndex, c: mid + 1 } 
         });
 
-        // ´´½¨¹¤×÷±í
+        // åˆ›å»ºå·¥ä½œè¡¨
         const ws = XLSX.utils.aoa_to_sheet(data);
         ws['!merges'] = merges;
 
-        // ÉèÖÃÈ«¾ÖÑùÊ½
+        // è®¾ç½®å…¨å±€æ ·å¼
         const range = XLSX.utils.decode_range(ws['!ref']);
         for(let R = range.s.r; R <= range.e.r; ++R) {
             for(let C = range.s.c; C <= range.e.c; ++C) {
                 const cell = XLSX.utils.encode_cell({r:R, c:C});
                 if(!ws[cell]) ws[cell] = { t: 's', v: '' };
 
-                // »ù´¡ÑùÊ½
+                // åŸºç¡€æ ·å¼
                 ws[cell].s = {
                     border: {
                         top:    { style: 'thin', color: { rgb: "000000" } },
@@ -1115,12 +1115,12 @@ function exportExcel() {
                         wrapText: true
                     },
                     font: {
-                        name: "ËÎÌå",
+                        name: "å®‹ä½“",
                         sz: 14
                     }
                 };
 
-                // ±êÌâÑùÊ½
+                // æ ‡é¢˜æ ·å¼
                 if(R === 0) {
                     ws[cell].s.font = { 
                         sz: 18,
@@ -1133,7 +1133,7 @@ function exportExcel() {
                     };
                 }
 
-                // ½²Ì¨ÑùÊ½
+                // è®²å°æ ·å¼
                 if(R === platformRowIndex && (C === mid || C === mid + 1)) {
                     ws[cell].s.fill = {
                         patternType: "solid",
@@ -1144,20 +1144,20 @@ function exportExcel() {
             }
         }
 
-        // ÉèÖÃĞĞÁĞ³ß´ç
-        ws['!rows'] = [{ hpx: 40 }]; // ±êÌâĞĞ¸ß¶È
+        // è®¾ç½®è¡Œåˆ—å°ºå¯¸
+        ws['!rows'] = [{ hpx: 40 }]; // æ ‡é¢˜è¡Œé«˜åº¦
         for(let i = 1; i < data.length; i++) {
-            ws['!rows'][i] = { hpx: 30 }; // Êı¾İĞĞ¸ß¶È
+            ws['!rows'][i] = { hpx: 30 }; // æ•°æ®è¡Œé«˜åº¦
         }
-        ws['!cols'] = colsWithAisles.map(() => ({ wpx: 100 })); // ÁĞ¿í
+        ws['!cols'] = colsWithAisles.map(() => ({ wpx: 100 })); // åˆ—å®½
 
-        // Éú³ÉÎÄ¼ş
+        // ç”Ÿæˆæ–‡ä»¶
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, '×ùÎ»±í');
-        XLSX.writeFile(wb, `×ùÎ»±í_${new Date().toLocaleDateString()}.xlsx`);
+        XLSX.utils.book_append_sheet(wb, ws, 'åº§ä½è¡¨');
+        XLSX.writeFile(wb, `åº§ä½è¡¨_${new Date().toLocaleDateString()}.xlsx`);
     } catch (error) {
-        console.error('µ¼³öÊ§°Ü:', error);
-        alert('µ¼³öÊ§°Ü£¬Çë¼ì²é¿ØÖÆÌ¨´íÎóĞÅÏ¢');
+        console.error('å¯¼å‡ºå¤±è´¥:', error);
+        alert('å¯¼å‡ºå¤±è´¥ï¼Œè¯·æ£€æŸ¥æ§åˆ¶å°é”™è¯¯ä¿¡æ¯');
     }
 }
 
@@ -1185,14 +1185,14 @@ function exportExcel() {
                 document.getElementById('cols').value = data.cols || 8;
                 currentView = data.currentView || 'teacher';
                 document.getElementById('viewToggle').textContent = 
-                    currentView === 'teacher' ? '½ÌÊ¦ÊÓ½Ç' : 'Ñ§ÉúÊÓ½Ç';
+                    currentView === 'teacher' ? 'æ•™å¸ˆè§†è§’' : 'å­¦ç”Ÿè§†è§’';
             }
         }
 
         function toggleView() {
             currentView = currentView === 'teacher' ? 'student' : 'teacher';
             document.getElementById('viewToggle').textContent = 
-                currentView === 'teacher' ? '½ÌÊ¦ÊÓ½Ç' : 'Ñ§ÉúÊÓ½Ç';
+                currentView === 'teacher' ? 'æ•™å¸ˆè§†è§’' : 'å­¦ç”Ÿè§†è§’';
             generateSeats();
         }
 
@@ -1216,12 +1216,12 @@ function exportExcel() {
         window.onload = initialize;
     </script>
    <script>
-        // ÔÚupdateUnassignedListº¯ÊıÖĞÌí¼ÓÈËÊı¸üĞÂ
+        // åœ¨updateUnassignedListå‡½æ•°ä¸­æ·»åŠ äººæ•°æ›´æ–°
         function updateUnassignedList() {
             const list = document.getElementById('unassignedList');
             list.innerHTML = '';
             const unassigned = students.filter(s => !s.seat);
-            // ¸üĞÂÈËÊıÏÔÊ¾
+            // æ›´æ–°äººæ•°æ˜¾ç¤º
             document.getElementById('unassignedCount').textContent = unassigned.length;
             
             unassigned.forEach(student => {
@@ -1235,7 +1235,7 @@ function exportExcel() {
             });
         }
 
-        // Ìí¼Óµ¼³öÏµÍ³Êı¾İ¹¦ÄÜ
+        // æ·»åŠ å¯¼å‡ºç³»ç»Ÿæ•°æ®åŠŸèƒ½
         function exportSystemData() {
             const data = {
                 students,
@@ -1248,14 +1248,14 @@ function exportExcel() {
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `×ùÎ»ÏµÍ³Êı¾İ_${new Date().toLocaleDateString()}.json`;
+            a.download = `åº§ä½ç³»ç»Ÿæ•°æ®_${new Date().toLocaleDateString()}.json`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
         }
 
-        // Ìí¼Óµ¼ÈëÊı¾İ¹¦ÄÜ
+        // æ·»åŠ å¯¼å…¥æ•°æ®åŠŸèƒ½
         function importData(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -1270,17 +1270,17 @@ function exportExcel() {
                     document.getElementById('cols').value = data.cols || 8;
                     currentView = data.currentView || 'teacher';
                     document.getElementById('viewToggle').textContent = 
-                        currentView === 'teacher' ? '½ÌÊ¦ÊÓ½Ç' : 'Ñ§ÉúÊÓ½Ç';
+                        currentView === 'teacher' ? 'æ•™å¸ˆè§†è§’' : 'å­¦ç”Ÿè§†è§’';
                     generateSeats();
                 } catch (error) {
-                    alert('ÎÄ¼ş¸ñÊ½´íÎó£¬µ¼ÈëÊ§°Ü');
+                    alert('æ–‡ä»¶æ ¼å¼é”™è¯¯ï¼Œå¯¼å…¥å¤±è´¥');
                 }
             };
             reader.readAsText(file);
         }
 
-        // ÆäËûÔ­ÓĞº¯Êı±£³Ö²»±ä...
- // É¾³ıÇøÓòÍÏ·Å´¦Àí
+        // å…¶ä»–åŸæœ‰å‡½æ•°ä¿æŒä¸å˜...
+ // åˆ é™¤åŒºåŸŸæ‹–æ”¾å¤„ç†
         function handleDeleteDragOver(e) {
             e.preventDefault();
             e.target.classList.add('dragover');
@@ -1290,13 +1290,13 @@ function exportExcel() {
             e.target.classList.remove('dragover');
         }
 
-        // ĞŞ¸ÄºóµÄÍÏ·ÅÉ¾³ı´¦Àí
+        // ä¿®æ”¹åçš„æ‹–æ”¾åˆ é™¤å¤„ç†
         function handleDeleteDrop(e) {
             e.preventDefault();
             const data = JSON.parse(e.dataTransfer.getData('text/plain'));
             
             if (data.type === 'unassigned') {
-                if (confirm('È·¶¨ÒªÓÀ¾ÃÉ¾³ı¸ÃÑ§ÉúÂğ£¿')) {
+                if (confirm('ç¡®å®šè¦æ°¸ä¹…åˆ é™¤è¯¥å­¦ç”Ÿå—ï¼Ÿ')) {
                     students = students.filter(s => s.id !== data.id);
                     updateUnassignedList();
                     saveData();
@@ -1316,18 +1316,18 @@ function exportExcel() {
             e.target.classList.remove('dragover');
         }
 
-        // Í³Ò»É¾³ı·½·¨
+        // ç»Ÿä¸€åˆ é™¤æ–¹æ³•
         function deleteStudentById(id) {
-            if (confirm('È·¶¨ÒªÉ¾³ı¸ÃÑ§ÉúÂğ£¿')) {
+            if (confirm('ç¡®å®šè¦åˆ é™¤è¯¥å­¦ç”Ÿå—ï¼Ÿ')) {
                 students = students.filter(s => s.id !== parseFloat(id));
                 generateSeats();
                 saveData();
             }
         }
 
-// ĞÂÔöÇå¿Õ×ùÎ»Ñ§Éú¹¦ÄÜ
+// æ–°å¢æ¸…ç©ºåº§ä½å­¦ç”ŸåŠŸèƒ½
 function clearSeatStudents() {
-    if (confirm('È·¶¨ÒªÇå¿ÕËùÓĞ×ùÎ»ÉÏµÄÑ§ÉúÂğ£¿')) {
+    if (confirm('ç¡®å®šè¦æ¸…ç©ºæ‰€æœ‰åº§ä½ä¸Šçš„å­¦ç”Ÿå—ï¼Ÿ')) {
         students.forEach(student => {
             if (student.seat) {
                 student.seat = null;
@@ -1344,10 +1344,10 @@ function clearSeatStudents() {
 function exportPDF() {
     const cloneNode = document.getElementById('seatGrid').cloneNode(true);
     
-    // ´´½¨ÑùÊ½µ÷Õû
+    // åˆ›å»ºæ ·å¼è°ƒæ•´
     const style = document.createElement('style');
     style.innerHTML = `
-        /* Òş²Ø·Ç±ØÒªÔªËØ */
+        /* éšè—éå¿…è¦å…ƒç´  */
         .row-numbers, 
         .control-bars,
         .group-header, 
@@ -1356,38 +1356,38 @@ function exportPDF() {
             display: none !important; 
         }
         
-        /* ×ùÎ»ĞĞÑùÊ½µ÷Õû */
+        /* åº§ä½è¡Œæ ·å¼è°ƒæ•´ */
         .seat-row {
-            gap: 0 !important;      /* È¥³ıÁĞ¼ä¼äÏ¶ */
-            margin-bottom: 15px;    /* Ôö¼ÓĞĞ¼ä¾à */
+            gap: 0 !important;      /* å»é™¤åˆ—é—´é—´éš™ */
+            margin-bottom: 15px;    /* å¢åŠ è¡Œé—´è· */
         }
         
-        /* ×ùÎ»µ¥ÔªÑùÊ½ */
+        /* åº§ä½å•å…ƒæ ·å¼ */
         .seat { 
             border: 2px solid #000 !important;
             background: white !important;
             color: black !important;
-            margin: 0 1px !important; /* ºáÏòÎ¢¼ä¾à */
-            width: 78px !important;   /* ±£³ÖÔ­ÓĞ¿í¶È */
+            margin: 0 1px !important; /* æ¨ªå‘å¾®é—´è· */
+            width: 78px !important;   /* ä¿æŒåŸæœ‰å®½åº¦ */
         }
         
-        /* ¹ıµÀÁĞÑùÊ½ */
+        /* è¿‡é“åˆ—æ ·å¼ */
         .group-container[style*="margin"] {
-            margin: 0 40px !important; /* ±£³Ö¹ıµÀ¿í¶È */
+            margin: 0 40px !important; /* ä¿æŒè¿‡é“å®½åº¦ */
         }
         
-        /* ½²Ì¨ÑùÊ½ÓÅ»¯ */
+        /* è®²å°æ ·å¼ä¼˜åŒ– */
        .platform {
             width: 160px !important;
             border: 2px solid #000 !important;
             background: #808080 !important;
             font-size: 22px !important;
             font-weight: bold !important;
-            margin: 0px auto !important;  /* ÉÏÏÂÔö¼Ó¼ä¾à */
+            margin: 0px auto !important;  /* ä¸Šä¸‹å¢åŠ é—´è· */
             position: relative;
         }
         
-        /* Ìí¼Ó½²Ì¨Ç°·Ö¸ôÏß */
+        /* æ·»åŠ è®²å°å‰åˆ†éš”çº¿ */
        // .platform::before {
            // content: '';
             //display: block;
@@ -1398,15 +1398,15 @@ function exportPDF() {
 
     cloneNode.appendChild(style);
 
-    // ´¦Àí½²Ì¨ÏÔÊ¾
+    // å¤„ç†è®²å°æ˜¾ç¤º
     const platform = cloneNode.querySelector('.platform');
     if (platform) {
-        platform.innerHTML = '<div style="margin:auto">½²Ì¨</div>';
+        platform.innerHTML = '<div style="margin:auto">è®²å°</div>';
     }
 
 
 
-    // Òş²ØÔ­Ê¼ÔªËØ²¢Ìí¼Ó¿ËÂ¡½Úµã
+    // éšè—åŸå§‹å…ƒç´ å¹¶æ·»åŠ å…‹éš†èŠ‚ç‚¹
     const original = document.getElementById('seatGrid');
     original.style.visibility = 'hidden';
     document.body.appendChild(cloneNode);
@@ -1422,24 +1422,24 @@ function exportPDF() {
             format: 'a4'
         });
 
-        // ¼ÆËãËõ·Å±ÈÀı
+        // è®¡ç®—ç¼©æ”¾æ¯”ä¾‹
         const imgRatio = Math.min(280 / canvas.width, 190 / canvas.height);
         const imgWidth = canvas.width * imgRatio;
         const imgHeight = canvas.height * imgRatio;
 
-        // ¾ÓÖĞÌí¼ÓÍ¼Æ¬
+        // å±…ä¸­æ·»åŠ å›¾ç‰‡
         const x = (297 - imgWidth) / 2;
         const y = (210 - imgHeight) / 2;
         pdf.addImage(canvas, 'PNG', x, y, imgWidth, imgHeight);
 
-        // ÇåÀíDOM
+        // æ¸…ç†DOM
         document.body.removeChild(cloneNode);
         original.style.visibility = 'visible';
 
-        pdf.save(`×ùÎ»±í_${new Date().toLocaleDateString()}.pdf`);
+        pdf.save(`åº§ä½è¡¨_${new Date().toLocaleDateString()}.pdf`);
     }).catch(error => {
-        console.error('µ¼³öÊ§°Ü:', error);
-        alert('PDFµ¼³öÊ§°Ü');
+        console.error('å¯¼å‡ºå¤±è´¥:', error);
+        alert('PDFå¯¼å‡ºå¤±è´¥');
     });
 }
 </script>
